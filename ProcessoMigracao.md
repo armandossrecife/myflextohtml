@@ -107,7 +107,7 @@ Uso do Apache Royale como um componente intermediário para traduzir um sistema 
 
 **Detalhamento do Pipeline de migração**
 
-O pipeline de migração está pronto na pasta `agenda-contatos/migracao`, é baseado em Agentes de IA Generativa para analisar o código do sistema original (sistema base), ele analisa o projeto frontend, e foi criada uma ferramenta em Python, que precisa de uma chave da Claude Platform. 
+O pipeline de migração está pronto na pasta `migracao`, é baseado em Agentes de IA Generativa para analisar o código do sistema original (sistema base), ele analisa o projeto frontend, e foi criada uma ferramenta em Python, que precisa de uma chave da Claude Platform. 
 
 **Como o pipeline funciona**
 
