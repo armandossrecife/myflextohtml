@@ -123,6 +123,8 @@ docker compose up -d --build backend    # recompila só o backend depois de edit
 
 ## Migração para HTML5 (Apache Royale + agentes Claude)
 
+O processo de migração está disponível no arquivo [Processo de Migração](ProcessoMigracao.md). 
+
 A pasta `migracao/` tem um pipeline que migra esta tela Flex para HTML5/CSS/JS. Ele usa dois agentes
 da Claude Platform e o compilador Apache Royale, que roda dentro do container do Flex (estágio
 `migrador` do `frontend/Dockerfile`). O resultado é o projeto `../agenda-contatos-html5`, que usa
