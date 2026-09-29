@@ -84,7 +84,7 @@ Acesse **http://localhost:8080**.
 
 Os navegadores atuais não têm mais o plugin Flash. Por isso, o `index.html` carrega o **[Ruffle](https://ruffle.rs)**, um emulador de Flash Player em WebAssembly, que executa o `Agenda.swf` direto na página. Com isso, é recomendável que você utilize o Google Chrome para testar a UI desta aplicação. 
 
-Segue a Tela carregada, via Google Chrome (usando o Ruffle). Link da Tela1.
+Segue a Tela carregada, via Google Chrome (usando o Ruffle). Link da [Tela Original - Flex](https://github.com/armandossrecife/myflextohtml/blob/main/tela_original_flex.png).
 
 ## Técnicas de Migração
 
@@ -287,5 +287,7 @@ cd ../agenda-contatos-html5 && docker compose up -d --build   # http://localhost
 ```
 
 Abra http://localhost:8082
+
+Segue a Tela carregada, via Safari (MacOS). Link da [Tela Migrada para o HTML](https://github.com/armandossrecife/myflextohtml/blob/main/tela_migrada_html.png).
 
 O passo a passo completo está em `migracao/README.md`.
