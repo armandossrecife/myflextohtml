@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!DOCTYPE cross-domain-policy SYSTEM "http://www.adobe.com/xml/dtds/cross-domain-policy.dtd">
+<!-- Permite que um SWF servido de outra origem (ex.: Flash Player Projector ou
+     http://localhost:8080) chame esta API diretamente em http://localhost:8081.
+     Em produção, restrinja o domain. -->
+<cross-domain-policy>
+    <site-control permitted-cross-domain-policies="master-only"/>
+    <allow-access-from domain="*"/>
+    <allow-http-request-headers-from domain="*" headers="*"/>
+</cross-domain-policy>

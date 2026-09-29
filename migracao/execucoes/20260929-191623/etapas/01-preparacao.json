@@ -1,0 +1,86 @@
+{
+  "etapa": "01-preparacao",
+  "titulo": "Preparação do ambiente",
+  "status": "sucesso",
+  "duracao_s": 0.46,
+  "validacoes": [
+    {
+      "nome": "Projeto Flex encontrado",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": "/workspace/agenda-contatos/frontend/src/Agenda.mxml"
+    },
+    {
+      "nome": "Código Flex inventariado",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": "2 arquivo(s)"
+    },
+    {
+      "nome": "Apache Royale instalado no container",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": "/opt/royale/node_modules/@apache-royale/royale-js/royale-asjs"
+    },
+    {
+      "nome": "Java 11+ disponível para o Royale",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": "openjdk version \"17.0.20.1\" 2026-08-18"
+    },
+    {
+      "nome": "Apache Flex SDK instalado no container",
+      "ok": true,
+      "severidade": "aviso",
+      "detalhe": "/opt/flex"
+    },
+    {
+      "nome": "Chave da Claude Platform configurada",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": "variável ANTHROPIC_API_KEY"
+    },
+    {
+      "nome": "SDK anthropic instalado",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": "1.9.0"
+    }
+  ],
+  "resultado": {
+    "modo": "claude",
+    "modelo": "claude-sonnet-5",
+    "java_flex": "openjdk version \"1.8.0_504\"",
+    "java_royale": "openjdk version \"17.0.20.1\" 2026-08-18",
+    "flex_home": "/opt/flex",
+    "royale_home": "/opt/royale/node_modules/@apache-royale/royale-js/royale-asjs",
+    "origem": "/workspace/agenda-contatos/frontend",
+    "destino": "/workspace/agenda-contatos-html5",
+    "arquivos_flex": [
+      "Agenda.mxml",
+      "br/ufpi/agenda/ApiClient.as"
+    ],
+    "componentes_flex": [
+      "mx:Application",
+      "mx:Button",
+      "mx:ControlBar",
+      "mx:DataGrid",
+      "mx:DataGridColumn",
+      "mx:Form",
+      "mx:FormHeading",
+      "mx:FormItem",
+      "mx:HBox",
+      "mx:HDividedBox",
+      "mx:Label",
+      "mx:List",
+      "mx:Panel",
+      "mx:Spacer",
+      "mx:TextInput",
+      "mx:columns"
+    ],
+    "endpoints": [
+      "/contatos"
+    ]
+  },
+  "erro": ""
+}

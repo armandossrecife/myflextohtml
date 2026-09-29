@@ -1,0 +1,108 @@
+{
+  "etapa": "04-conversao",
+  "titulo": "Conversão para MXML/AS3 Royale (Agente Analista)",
+  "status": "sucesso",
+  "duracao_s": 115.83,
+  "validacoes": [
+    {
+      "nome": "Agente concluiu a conversão",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "Código Royale gerado",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": "2 arquivo(s)"
+    },
+    {
+      "nome": "Todos os arquivos planejados foram gerados",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": "Agenda.mxml, br/ufpi/agenda/ApiClient.as"
+    },
+    {
+      "nome": "MXML bem formado (XML válido)",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "Nenhum namespace Flex (mx/spark) no código Royale",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "Nenhum import mx.*, spark.* ou flash.*",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "Arquivo principal usa j:Application (Royale)",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "Application declara SimpleCSSValuesImpl",
+      "ok": true,
+      "severidade": "aviso",
+      "detalhe": ""
+    },
+    {
+      "nome": "Bindings têm bead de DataBinding",
+      "ok": true,
+      "severidade": "aviso",
+      "detalhe": ""
+    },
+    {
+      "nome": "Nenhum j:Card com height fixo contendo j:Form",
+      "ok": true,
+      "severidade": "aviso",
+      "detalhe": ""
+    },
+    {
+      "nome": "Endpoint '/contatos' presente no código Royale",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "Parâmetro de contrato 'suppress_response_codes' preservado",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "Parâmetro de contrato '_method' preservado",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "Funções da origem preservadas no destino",
+      "ok": true,
+      "severidade": "aviso",
+      "detalhe": "30 função(ões)"
+    }
+  ],
+  "resultado": {
+    "concluido": true,
+    "turnos": 2,
+    "chamadas_ferramentas": 3,
+    "uso_tokens": {
+      "cache_creation_input_tokens": 20091,
+      "cache_read_input_tokens": 41099,
+      "input_tokens": 4,
+      "output_tokens": 15131
+    },
+    "arquivos_escritos": [
+      "royale/src/Agenda.mxml",
+      "royale/src/br/ufpi/agenda/ApiClient.as"
+    ]
+  },
+  "erro": ""
+}

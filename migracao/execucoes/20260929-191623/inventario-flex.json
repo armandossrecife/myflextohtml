@@ -1,0 +1,279 @@
+{
+  "projeto": "/workspace/agenda-contatos/frontend",
+  "arquivos": [
+    {
+      "caminho": "Agenda.mxml",
+      "bytes": 16601,
+      "sha256": "94ac9e9fc6f87ca2373925ed233d8d3ef17ef1857d560f6fb6ae40742433bb29",
+      "tipo": "mxml",
+      "analise": {
+        "arquivo": "Agenda.mxml",
+        "raiz": "mx:Application",
+        "namespaces": [
+          [
+            "fx",
+            "http://ns.adobe.com/mxml/2009"
+          ],
+          [
+            "mx",
+            "library://ns.adobe.com/flex/mx"
+          ]
+        ],
+        "componentes": {
+          "mx:Application": 1,
+          "fx:Style": 1,
+          "fx:Script": 1,
+          "mx:HBox": 6,
+          "mx:Label": 5,
+          "mx:Spacer": 1,
+          "mx:TextInput": 9,
+          "mx:Button": 10,
+          "mx:HDividedBox": 1,
+          "mx:Panel": 2,
+          "mx:DataGrid": 1,
+          "mx:columns": 1,
+          "mx:DataGridColumn": 5,
+          "mx:Form": 1,
+          "mx:FormItem": 9,
+          "mx:FormHeading": 3,
+          "mx:List": 2,
+          "mx:ControlBar": 1
+        },
+        "ids": [
+          "txtBusca",
+          "grade",
+          "txtNome",
+          "txtTelefone",
+          "lstTelefones",
+          "txtEmail",
+          "lstEmails",
+          "txtRua",
+          "txtCep",
+          "txtCidade",
+          "txtEstado",
+          "txtPais",
+          "lblStatus"
+        ],
+        "eventos": [
+          {
+            "componente": "mx:Application",
+            "id": "",
+            "evento": "creationComplete",
+            "handler": "iniciar()"
+          },
+          {
+            "componente": "mx:TextInput",
+            "id": "txtBusca",
+            "evento": "enter",
+            "handler": "carregar()"
+          },
+          {
+            "componente": "mx:Button",
+            "id": "",
+            "evento": "click",
+            "handler": "carregar()"
+          },
+          {
+            "componente": "mx:Button",
+            "id": "",
+            "evento": "click",
+            "handler": "txtBusca.text=''; carregar()"
+          },
+          {
+            "componente": "mx:Button",
+            "id": "",
+            "evento": "click",
+            "handler": "novo()"
+          },
+          {
+            "componente": "mx:DataGrid",
+            "id": "grade",
+            "evento": "change",
+            "handler": "aoSelecionar(event)"
+          },
+          {
+            "componente": "mx:TextInput",
+            "id": "txtTelefone",
+            "evento": "enter",
+            "handler": "adicionarTelefone()"
+          },
+          {
+            "componente": "mx:Button",
+            "id": "",
+            "evento": "click",
+            "handler": "adicionarTelefone()"
+          },
+          {
+            "componente": "mx:Button",
+            "id": "",
+            "evento": "click",
+            "handler": "removerSelecionado(lstTelefones, telefones)"
+          },
+          {
+            "componente": "mx:TextInput",
+            "id": "txtEmail",
+            "evento": "enter",
+            "handler": "adicionarEmail()"
+          },
+          {
+            "componente": "mx:Button",
+            "id": "",
+            "evento": "click",
+            "handler": "adicionarEmail()"
+          },
+          {
+            "componente": "mx:Button",
+            "id": "",
+            "evento": "click",
+            "handler": "removerSelecionado(lstEmails, emails)"
+          },
+          {
+            "componente": "mx:Button",
+            "id": "",
+            "evento": "click",
+            "handler": "novo()"
+          },
+          {
+            "componente": "mx:Button",
+            "id": "",
+            "evento": "click",
+            "handler": "confirmarExclusao()"
+          },
+          {
+            "componente": "mx:Button",
+            "id": "",
+            "evento": "click",
+            "handler": "salvar()"
+          }
+        ],
+        "bindings": [
+          "mx:Button.enabled={!ocupado}",
+          "mx:Button.enabled={!ocupado}",
+          "mx:DataGrid.dataProvider={contatos}",
+          "mx:Panel.title={isNaN(idAtual) ? 'Novo contato' : 'Editando contato #' + idAtual}",
+          "mx:Label.text={isNaN(idAtual) ? '(gerado ao salvar)' : String(idAtual)}",
+          "mx:List.dataProvider={telefones}",
+          "mx:Button.enabled={lstTelefones.selectedIndex >= 0}",
+          "mx:List.dataProvider={emails}",
+          "mx:Button.enabled={lstEmails.selectedIndex >= 0}",
+          "mx:Button.enabled={!ocupado}",
+          "mx:Button.enabled={!ocupado && !isNaN(idAtual)}",
+          "mx:Button.enabled={!ocupado}"
+        ],
+        "imports": [
+          "br.ufpi.agenda.ApiClient",
+          "mx.collections.ArrayCollection",
+          "mx.controls.Alert",
+          "mx.controls.List",
+          "mx.controls.dataGridClasses.DataGridColumn",
+          "mx.events.CloseEvent",
+          "mx.core.FlexGlobals",
+          "mx.events.ListEvent"
+        ],
+        "funcoes": [
+          "adicionarEmail",
+          "adicionarTelefone",
+          "aoSelecionar",
+          "carregar",
+          "confirmarExclusao",
+          "copiar",
+          "excluir",
+          "falhou",
+          "iniciar",
+          "liberar",
+          "limparFormulario",
+          "montarContato",
+          "novo",
+          "ocupar",
+          "preencherFormulario",
+          "primeiro",
+          "removerSelecionado",
+          "rotuloCidade",
+          "rotuloEmail",
+          "rotuloTelefone",
+          "salvar",
+          "selecionarNaGrade",
+          "texto",
+          "trim"
+        ],
+        "linhas": 402
+      }
+    },
+    {
+      "caminho": "br/ufpi/agenda/ApiClient.as",
+      "bytes": 4399,
+      "sha256": "bb24530aece258f54c572a8192ddbe8d7c2eaf154ccce025cb557339646fb751",
+      "tipo": "as3",
+      "analise": {
+        "arquivo": "ApiClient.as",
+        "pacote": "br.ufpi.agenda",
+        "classe": "ApiClient",
+        "imports": [
+          "mx.rpc.events.FaultEvent",
+          "mx.rpc.events.ResultEvent",
+          "mx.rpc.http.HTTPService"
+        ],
+        "funcoes": [
+          "ApiClient",
+          "atualizar",
+          "buscar",
+          "chamar",
+          "criar",
+          "excluir",
+          "listar"
+        ],
+        "servicos_rede": [
+          "HTTPService"
+        ],
+        "urls": [
+          "/contatos",
+          "/contatos/"
+        ],
+        "linhas": 122
+      }
+    }
+  ],
+  "total_arquivos": 2,
+  "total_linhas": 524,
+  "componentes": {
+    "mx:Application": 1,
+    "fx:Style": 1,
+    "fx:Script": 1,
+    "mx:HBox": 6,
+    "mx:Label": 5,
+    "mx:Spacer": 1,
+    "mx:TextInput": 9,
+    "mx:Button": 10,
+    "mx:HDividedBox": 1,
+    "mx:Panel": 2,
+    "mx:DataGrid": 1,
+    "mx:columns": 1,
+    "mx:DataGridColumn": 5,
+    "mx:Form": 1,
+    "mx:FormItem": 9,
+    "mx:FormHeading": 3,
+    "mx:List": 2,
+    "mx:ControlBar": 1
+  },
+  "componentes_flex": [
+    "mx:Application",
+    "mx:Button",
+    "mx:ControlBar",
+    "mx:DataGrid",
+    "mx:DataGridColumn",
+    "mx:Form",
+    "mx:FormHeading",
+    "mx:FormItem",
+    "mx:HBox",
+    "mx:HDividedBox",
+    "mx:Label",
+    "mx:List",
+    "mx:Panel",
+    "mx:Spacer",
+    "mx:TextInput",
+    "mx:columns"
+  ],
+  "urls_api": [
+    "/contatos"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "etapa": "05-compilacao",
+  "titulo": "Compilação Royale assistida (Agente Assistente do Compilador)",
+  "status": "sucesso",
+  "duracao_s": 7.56,
+  "validacoes": [
+    {
+      "nome": "Royale compilou sem erros",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "HTML5 gerado (index.html + JS + CSS)",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": "Agenda.js, Agenda.min.css, index.html"
+    },
+    {
+      "nome": "Compilações dentro do limite (5)",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": "1 tentativa(s)"
+    },
+    {
+      "nome": "Sem avisos do compilador",
+      "ok": true,
+      "severidade": "aviso",
+      "detalhe": "0 aviso(s)"
+    }
+  ],
+  "resultado": {
+    "sucesso": true,
+    "tentativas": [
+      {
+        "tentativa": 1,
+        "origem": "pipeline",
+        "sucesso": true,
+        "erros": 0,
+        "avisos": 0,
+        "duracao_s": 7.6,
+        "diagnosticos": []
+      }
+    ],
+    "agente_usado": false,
+    "conclusao_agente": {},
+    "uso_tokens": {},
+    "artefatos": [
+      "Agenda.js",
+      "Agenda.min.css",
+      "index.html"
+    ],
+    "erros_finais": [],
+    "avisos_finais": 0
+  },
+  "erro": ""
+}

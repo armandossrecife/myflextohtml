@@ -1,0 +1,24 @@
+# __TITULO__ - versão HTML5 (Apache Royale), gerada pelo pipeline de migração.
+#
+# Usa a MESMA API Java 7 do projeto Flex: este container entra na rede Docker do
+# projeto __PROJETO_FLEX__ e encaminha /api para o serviço "backend" (Tomcat 7 / Java 7).
+#
+#   1) suba antes o projeto Flex:   cd ../__PROJETO_FLEX__ && docker compose up -d
+#   2) suba esta aplicação:         docker compose up -d --build
+#   3) acesse:                      http://localhost:__PORTA__
+
+services:
+  frontend-html5:
+    build: .
+    image: __IMAGEM__:1.0
+    container_name: __CONTAINER__
+    restart: unless-stopped
+    ports:
+      - "__PORTA__:80"
+    networks:
+      - rede-flex
+
+networks:
+  rede-flex:
+    external: true
+    name: __REDE__

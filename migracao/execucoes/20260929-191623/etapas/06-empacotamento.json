@@ -1,0 +1,85 @@
+{
+  "etapa": "06-empacotamento",
+  "titulo": "Empacotamento do projeto HTML5",
+  "status": "sucesso",
+  "duracao_s": 0.01,
+  "validacoes": [
+    {
+      "nome": "www/index.html gerado",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "index.html carrega Agenda.js",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "index.html não depende de Flash/SWF",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "Agenda.js gerado",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": "483672 bytes"
+    },
+    {
+      "nome": "CSS gerado",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": "Agenda.min.css"
+    },
+    {
+      "nome": "nginx.conf encaminha /api para o backend Java 7",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "Dockerfile presente",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "docker-compose.yml presente",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "src/Agenda.mxml presente",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    }
+  ],
+  "resultado": {
+    "www": [
+      "Agenda.js",
+      "Agenda.min.css",
+      "index.html"
+    ],
+    "gerados": [
+      "Dockerfile",
+      "nginx.conf",
+      "docker-compose.yml",
+      ".dockerignore"
+    ],
+    "parametros": {
+      "__PROJETO_FLEX__": "agenda-contatos",
+      "__BACKEND__": "http://backend:8080",
+      "__TITULO__": "Agenda de Contatos",
+      "__PORTA__": "8082",
+      "__IMAGEM__": "agenda-contatos-html5",
+      "__CONTAINER__": "agenda-contatos-html5",
+      "__REDE__": "agenda-contatos_default"
+    }
+  },
+  "erro": ""
+}

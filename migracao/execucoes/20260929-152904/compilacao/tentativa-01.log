@@ -1,0 +1,20 @@
+$ /opt/royale/node_modules/@apache-royale/royale-js/royale-asjs/js/bin/mxmlc -targets=JSRoyale -theme=/opt/royale/node_modules/@apache-royale/royale-js/royale-asjs/frameworks/themes/JewelTheme/src/main/resources/defaults.css -source-path=src -js-output=/workspace/agenda-contatos-html5 -js-dynamic-access-unknown-members=true -js-output-optimization=skipAsCoercions -remove-circulars -html-template=/workspace/agenda-contatos-html5/template/index-template.html src/Agenda.mxml
+
+Using Royale Compiler codebase: /opt/royale/node_modules/@apache-royale/royale-js/royale-asjs/js/bin/../..
+Using Royale SDK: /opt/royale/node_modules/@apache-royale/royale-js/royale-asjs
+MXMLJSC
++royalelib=/opt/royale/node_modules/@apache-royale/royale-js/royale-asjs/frameworks
+-sdk-js-lib=/opt/royale/node_modules/@apache-royale/royale-js/royale-asjs/frameworks/js/Royale/generated-sources
+-targets=JSRoyale
+-theme=/opt/royale/node_modules/@apache-royale/royale-js/royale-asjs/frameworks/themes/JewelTheme/src/main/resources/defaults.css
+-source-path=src
+-js-output=/workspace/agenda-contatos-html5
+-js-dynamic-access-unknown-members=true
+-js-output-optimization=skipAsCoercions
+-remove-circulars
+-html-template=/workspace/agenda-contatos-html5/template/index-template.html
+src/Agenda.mxml
+The project 'Agenda' has been successfully compiled and optimized.
+7.606878712 seconds
+Sep 29, 2026 3:33:11 PM com.google.javascript.jscomp.LoggerErrorManager printSummary
+INFO: 0 error(s), 0 warning(s), 96.7% typed

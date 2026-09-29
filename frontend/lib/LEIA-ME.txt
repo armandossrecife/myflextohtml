@@ -1,0 +1,3 @@
+Opcional: coloque aqui um playerglobal.swc (Flash Player 11.1 ou superior) caso
+o download automático durante o "docker build" falhe. O Dockerfile usa este
+arquivo se ele existir.

@@ -1,0 +1,111 @@
+# Agenda de Contatos: Adobe Flex (frontend) + Java 7 / Tomcat 7 (backend) + MySQL 5.7
+#
+#   docker compose up -d --build
+#
+#   http://localhost:8080          -> frontend (nginx + Agenda.swf rodando no Ruffle)
+#   http://localhost:8081/api/...  -> backend REST (Tomcat 7 / Java 7), acesso direto
+#   localhost:3307                 -> MySQL 5.7 (usuário agenda / senha agenda)
+
+services:
+  db:
+    build: ./db
+    image: agenda-db:1.0
+    # A imagem oficial do MySQL 5.7 só existe para amd64; em Macs Apple Silicon ela roda emulada.
+    platform: linux/amd64
+    container_name: agenda-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: agenda
+      MYSQL_USER: agenda
+      MYSQL_PASSWORD: agenda
+      TZ: America/Fortaleza
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
+    ports:
+      - "3307:3306"
+    volumes:
+      - dados-mysql:/var/lib/mysql
+    healthcheck:
+      # -h 127.0.0.1 força TCP: só responde depois que o script de init terminou
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  backend:
+    build: ./backend
+    image: agenda-backend:1.0
+    # Imagem tomcat:7-jre7 (Java 7) só existe para amd64
+    platform: linux/amd64
+    container_name: agenda-backend
+    restart: unless-stopped
+    environment:
+      DB_URL: jdbc:mysql://db:3306/agenda?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+      DB_USER: agenda
+      DB_PASSWORD: agenda
+    ports:
+      - "8081:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    image: agenda-frontend:1.0
+    container_name: agenda-frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+  # ------------------------------------------------------------------ migração Flex -> HTML5
+  # Serviços opcionais (perfil "migracao"). Não sobem com "docker compose up".
+  #
+  #   export ANTHROPIC_API_KEY=sk-ant-...
+  #   docker compose --profile migracao run --rm migrador        # pipeline completo
+  #   cd ../agenda-contatos-html5 && docker compose up -d --build # sobe a versão HTML5 (porta 8082)
+  #   cd ../agenda-contatos && docker compose --profile migracao run --rm e2e   # teste no navegador
+  migrador:
+    build:
+      context: ./frontend
+      target: migrador
+    image: agenda-migrador:1.0
+    profiles: ["migracao"]
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      CLAUDE_MODEL: ${CLAUDE_MODEL:-claude-sonnet-5}
+      MODO_MIGRACAO: ${MODO_MIGRACAO:-claude}
+      PROJETO_FLEX: agenda-contatos
+      API_BASE_TESTE: http://backend:8080/api
+    volumes:
+      - ./:/workspace/agenda-contatos
+      - ../agenda-contatos-html5:/workspace/agenda-contatos-html5
+    command: ["python", "migrar.py",
+              "--origem", "/workspace/agenda-contatos/frontend",
+              "--destino", "/workspace/agenda-contatos-html5"]
+    depends_on:
+      - backend
+
+  e2e:
+    image: mcr.microsoft.com/playwright:v1.56.0-noble
+    profiles: ["migracao"]
+    environment:
+      APP_URL: ${APP_URL:-http://agenda-contatos-html5/}
+    volumes:
+      - ./migracao/e2e:/e2e:ro
+      - ./migracao/execucoes:/resultados
+    command:
+      - bash
+      - -c
+      - >-
+        mkdir -p /tmp/e2e && cp /e2e/teste-e2e.mjs /tmp/e2e/ && cd /tmp/e2e &&
+        npm install --no-save --no-audit --no-fund --loglevel=error playwright@1.56.0 &&
+        node teste-e2e.mjs "$$APP_URL" "/resultados/e2e-$$(date +%Y%m%d-%H%M%S)"
+
+volumes:
+  dados-mysql:

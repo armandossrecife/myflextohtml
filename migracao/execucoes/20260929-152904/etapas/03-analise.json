@@ -1,0 +1,65 @@
+{
+  "etapa": "03-analise",
+  "titulo": "Análise do código Flex (Agente Analista)",
+  "status": "sucesso",
+  "duracao_s": 109.4,
+  "validacoes": [
+    {
+      "nome": "Agente analista concluiu a análise",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "Todos os arquivos Flex estão no plano de conversão",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": "2 arquivo(s)"
+    },
+    {
+      "nome": "Destinos apontam para royale/src/*.mxml|*.as",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": "royale/src/Agenda.mxml, royale/src/br/ufpi/agenda/ApiClient.as"
+    },
+    {
+      "nome": "Arquivo principal Agenda.mxml mantém o nome",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "Todo componente Flex usado tem mapeamento para Royale",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": "15 componente(s)"
+    },
+    {
+      "nome": "Endpoints da API identificados",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": "5 operação(ões)"
+    },
+    {
+      "nome": "Riscos e decisões registrados",
+      "ok": true,
+      "severidade": "aviso",
+      "detalhe": "9 risco(s)"
+    }
+  ],
+  "resultado": {
+    "concluido": true,
+    "turnos": 3,
+    "chamadas_ferramentas": 4,
+    "uso_tokens": {
+      "cache_creation_input_tokens": 24038,
+      "cache_read_input_tokens": 24689,
+      "input_tokens": 6,
+      "output_tokens": 14660
+    },
+    "componentes_mapeados": 17,
+    "servicos": 5,
+    "riscos": 9
+  },
+  "erro": ""
+}

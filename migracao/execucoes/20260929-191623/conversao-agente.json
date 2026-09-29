@@ -1,0 +1,28 @@
+{
+  "resumo": "Conversão completa da Agenda de Contatos de Adobe Flex (MX) para Apache Royale Jewel. Agenda.mxml reescrito com j:Application/j:View, j:Card (Panel), j:DataGrid, j:Form/j:FormItem/j:FormHeading, j:HGroup/j:VerticalLayout no lugar de HBox/HDividedBox, CardActions no lugar de ControlBar, e todos os handlers AS3 portados mantendo os mesmos nomes de função e a mesma lógica de negócio (busca, CRUD, validação de telefone/e-mail, seleção na grade). ApiClient.as reescrito usando org.apache.royale.net.HTTPService/HTTPConstants, preservando exatamente as mesmas URLs, query params (suppress_response_codes, _ts, _method, q) e verbos HTTP (GET/POST com override PUT/DELETE) do cliente original.",
+  "arquivos": [
+    "royale/src/Agenda.mxml",
+    "royale/src/br/ufpi/agenda/ApiClient.as"
+  ],
+  "decisoes": [
+    "ArrayCollection substituído por org.apache.royale.collections.ArrayList (mesma API: length, getItemAt, addItem, removeItemAt, getItemIndex, source).",
+    "mx.controls.Alert substituído por org.apache.royale.jewel.Alert; confirmação de exclusão usa new Alert() + AlertModel para customizar yesLabel/noLabel ('Sim'/'Não') e CloseEvent.CLOSE no lugar do handler posicional do Flex.",
+    "Alert.yesLabel/noLabel/cancelLabel globais removidos de iniciar(); labels da confirmação agora são definidos por instância via AlertModel em confirmarExclusao().",
+    "FlexGlobals.topLevelApplication.parameters.apiUrl removido; base da API fixada como 'api', conforme guia.",
+    "mx:HDividedBox virou j:HGroup com Cards de largura 55%/45% e sem height fixo no Card do formulário (para não cortar campos, seção 5.2 do guia).",
+    "mx:Panel virou j:Card + j:CardHeader/html:H4 (título, inclusive dinâmico via binding) + j:CardPrimaryContent; mx:ControlBar virou j:CardActions itemsHorizontalAlign='itemsRight'.",
+    "Atributos 'enabled' removidos de todos os botões; guardas equivalentes (if (ocupado) return;) adicionadas em carregar(), salvar() e confirmarExclusao() para evitar ações concorrentes/duplo-clique.",
+    "toolTip removido de TextInput/Button (não crítico para a funcionalidade).",
+    "maxChars removido de todos os TextInput (validação de tamanho não é feita no cliente; backend permanece autoridade).",
+    "required='true' em FormItem virou asterisco no label ('Nome *').",
+    "DataGridColumn com labelFunction recebeu dataField obrigatório (telefones/emails/endereco) mesmo não sendo exibido diretamente, conforme exigência do Jewel.",
+    "labelFunction das colunas (rotuloTelefone/rotuloEmail/rotuloCidade) migradas para assinatura (item:Object, col:IDataGridColumnList):String.",
+    "grade.scrollToIndex removido (sem equivalente); mantido apenas selectedIndex.",
+    "txtNome.setFocus() e demais setFocus() removidos (sem equivalente em Jewel)."
+  ],
+  "pendencias": [
+    "Perda da funcionalidade de redimensionar o divisor entre grade e formulário (mx:HDividedBox não tem equivalente arrastável em Jewel).",
+    "Botões 'Novo contato' e 'Limpar' perderam a distinção de habilitado/desabilitado durante 'ocupado' (apenas as ações de busca/salvar/excluir têm guarda contra chamadas concorrentes).",
+    "Tooltips informativos (ex.: 'Nome, e-mail ou telefone' na busca, 'Adicionar telefone/e-mail' nos botões '+') foram removidos, sem substituição visual."
+  ]
+}

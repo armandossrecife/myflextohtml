@@ -1,0 +1,532 @@
+{
+  "sucesso": true,
+  "avisos": 0,
+  "etapas": [
+    {
+      "etapa": "01-preparacao",
+      "titulo": "Preparação do ambiente",
+      "status": "sucesso",
+      "duracao_s": 0.38,
+      "validacoes": [
+        {
+          "nome": "Projeto Flex encontrado",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": "/workspace/agenda-contatos/frontend/src/Agenda.mxml"
+        },
+        {
+          "nome": "Código Flex inventariado",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": "2 arquivo(s)"
+        },
+        {
+          "nome": "Apache Royale instalado no container",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": "/opt/royale/node_modules/@apache-royale/royale-js/royale-asjs"
+        },
+        {
+          "nome": "Java 11+ disponível para o Royale",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": "openjdk version \"17.0.20.1\" 2026-08-18"
+        },
+        {
+          "nome": "Apache Flex SDK instalado no container",
+          "ok": true,
+          "severidade": "aviso",
+          "detalhe": "/opt/flex"
+        },
+        {
+          "nome": "Chave da Claude Platform configurada",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": "variável ANTHROPIC_API_KEY"
+        },
+        {
+          "nome": "SDK anthropic instalado",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": "1.9.0"
+        }
+      ],
+      "resultado": {
+        "modo": "claude",
+        "modelo": "claude-sonnet-5",
+        "java_flex": "openjdk version \"1.8.0_504\"",
+        "java_royale": "openjdk version \"17.0.20.1\" 2026-08-18",
+        "flex_home": "/opt/flex",
+        "royale_home": "/opt/royale/node_modules/@apache-royale/royale-js/royale-asjs",
+        "origem": "/workspace/agenda-contatos/frontend",
+        "destino": "/workspace/agenda-contatos-html5",
+        "arquivos_flex": [
+          "Agenda.mxml",
+          "br/ufpi/agenda/ApiClient.as"
+        ],
+        "componentes_flex": [
+          "mx:Application",
+          "mx:Button",
+          "mx:ControlBar",
+          "mx:DataGrid",
+          "mx:DataGridColumn",
+          "mx:Form",
+          "mx:FormHeading",
+          "mx:FormItem",
+          "mx:HBox",
+          "mx:HDividedBox",
+          "mx:Label",
+          "mx:List",
+          "mx:Panel",
+          "mx:Spacer",
+          "mx:TextInput",
+          "mx:columns"
+        ],
+        "endpoints": [
+          "/contatos"
+        ]
+      },
+      "erro": ""
+    },
+    {
+      "etapa": "02-baseline-flex",
+      "titulo": "Compilação de referência do Flex",
+      "status": "sucesso",
+      "duracao_s": 1.37,
+      "validacoes": [
+        {
+          "nome": "Código Flex original compila (SWF gerado)",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": "Agenda.swf (432283 bytes)"
+        }
+      ],
+      "resultado": {
+        "executada": true,
+        "sucesso": true,
+        "codigo_saida": 0,
+        "duracao_s": 1.4,
+        "artefatos": [
+          "Agenda.swf (432283 bytes)"
+        ],
+        "erros": []
+      },
+      "erro": ""
+    },
+    {
+      "etapa": "03-analise",
+      "titulo": "Análise do código Flex (Agente Analista)",
+      "status": "sucesso",
+      "duracao_s": 41.74,
+      "validacoes": [
+        {
+          "nome": "Agente analista concluiu a análise",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "Todos os arquivos Flex estão no plano de conversão",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": "2 arquivo(s)"
+        },
+        {
+          "nome": "Destinos apontam para royale/src/*.mxml|*.as",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": "royale/src/Agenda.mxml, royale/src/br/ufpi/agenda/ApiClient.as"
+        },
+        {
+          "nome": "Arquivo principal Agenda.mxml mantém o nome",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "Todo componente Flex usado tem mapeamento para Royale",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": "15 componente(s)"
+        },
+        {
+          "nome": "Endpoints da API identificados",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": "5 operação(ões)"
+        },
+        {
+          "nome": "Riscos e decisões registrados",
+          "ok": true,
+          "severidade": "aviso",
+          "detalhe": "8 risco(s)"
+        }
+      ],
+      "resultado": {
+        "concluido": true,
+        "turnos": 2,
+        "chamadas_ferramentas": 3,
+        "uso_tokens": {
+          "cache_creation_input_tokens": 17385,
+          "cache_read_input_tokens": 9635,
+          "input_tokens": 4,
+          "output_tokens": 5013
+        },
+        "componentes_mapeados": 16,
+        "servicos": 5,
+        "riscos": 8
+      },
+      "erro": ""
+    },
+    {
+      "etapa": "04-conversao",
+      "titulo": "Conversão para MXML/AS3 Royale (Agente Analista)",
+      "status": "sucesso",
+      "duracao_s": 106.5,
+      "validacoes": [
+        {
+          "nome": "Agente concluiu a conversão",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "Código Royale gerado",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": "2 arquivo(s)"
+        },
+        {
+          "nome": "Todos os arquivos planejados foram gerados",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": "Agenda.mxml, br/ufpi/agenda/ApiClient.as"
+        },
+        {
+          "nome": "MXML bem formado (XML válido)",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "Nenhum namespace Flex (mx/spark) no código Royale",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "Nenhum import mx.*, spark.* ou flash.*",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "Arquivo principal usa j:Application (Royale)",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "Application declara SimpleCSSValuesImpl",
+          "ok": true,
+          "severidade": "aviso",
+          "detalhe": ""
+        },
+        {
+          "nome": "Bindings têm bead de DataBinding",
+          "ok": true,
+          "severidade": "aviso",
+          "detalhe": ""
+        },
+        {
+          "nome": "Nenhum j:Card com height fixo contendo j:Form",
+          "ok": true,
+          "severidade": "aviso",
+          "detalhe": ""
+        },
+        {
+          "nome": "Endpoint '/contatos' presente no código Royale",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "Parâmetro de contrato 'suppress_response_codes' preservado",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "Parâmetro de contrato '_method' preservado",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "Funções da origem preservadas no destino",
+          "ok": true,
+          "severidade": "aviso",
+          "detalhe": "30 função(ões)"
+        }
+      ],
+      "resultado": {
+        "concluido": true,
+        "turnos": 3,
+        "chamadas_ferramentas": 3,
+        "uso_tokens": {
+          "cache_creation_input_tokens": 18677,
+          "cache_read_input_tokens": 70199,
+          "input_tokens": 6,
+          "output_tokens": 14503
+        },
+        "arquivos_escritos": [
+          "royale/src/br/ufpi/agenda/ApiClient.as",
+          "royale/src/Agenda.mxml"
+        ]
+      },
+      "erro": ""
+    },
+    {
+      "etapa": "05-compilacao",
+      "titulo": "Compilação Royale assistida (Agente Assistente do Compilador)",
+      "status": "sucesso",
+      "duracao_s": 7.81,
+      "validacoes": [
+        {
+          "nome": "Royale compilou sem erros",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "HTML5 gerado (index.html + JS + CSS)",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": "Agenda.js, Agenda.min.css, index.html"
+        },
+        {
+          "nome": "Compilações dentro do limite (5)",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": "1 tentativa(s)"
+        },
+        {
+          "nome": "Sem avisos do compilador",
+          "ok": true,
+          "severidade": "aviso",
+          "detalhe": "0 aviso(s)"
+        }
+      ],
+      "resultado": {
+        "sucesso": true,
+        "tentativas": [
+          {
+            "tentativa": 1,
+            "origem": "pipeline",
+            "sucesso": true,
+            "erros": 0,
+            "avisos": 0,
+            "duracao_s": 7.8,
+            "diagnosticos": []
+          }
+        ],
+        "agente_usado": false,
+        "conclusao_agente": {},
+        "uso_tokens": {},
+        "artefatos": [
+          "Agenda.js",
+          "Agenda.min.css",
+          "index.html"
+        ],
+        "erros_finais": [],
+        "avisos_finais": 0
+      },
+      "erro": ""
+    },
+    {
+      "etapa": "06-empacotamento",
+      "titulo": "Empacotamento do projeto HTML5",
+      "status": "sucesso",
+      "duracao_s": 0.01,
+      "validacoes": [
+        {
+          "nome": "www/index.html gerado",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "index.html carrega Agenda.js",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "index.html não depende de Flash/SWF",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "Agenda.js gerado",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": "483797 bytes"
+        },
+        {
+          "nome": "CSS gerado",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": "Agenda.min.css"
+        },
+        {
+          "nome": "nginx.conf encaminha /api para o backend Java 7",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "Dockerfile presente",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "docker-compose.yml presente",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "src/Agenda.mxml presente",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        }
+      ],
+      "resultado": {
+        "www": [
+          "Agenda.js",
+          "Agenda.min.css",
+          "index.html"
+        ],
+        "gerados": [
+          "Dockerfile",
+          "nginx.conf",
+          "docker-compose.yml",
+          ".dockerignore"
+        ],
+        "parametros": {
+          "__PROJETO_FLEX__": "agenda-contatos",
+          "__BACKEND__": "http://backend:8080",
+          "__TITULO__": "Agenda de Contatos",
+          "__PORTA__": "8082",
+          "__IMAGEM__": "agenda-contatos-html5",
+          "__CONTAINER__": "agenda-contatos-html5",
+          "__REDE__": "agenda-contatos_default"
+        }
+      },
+      "erro": ""
+    },
+    {
+      "etapa": "07-integracao",
+      "titulo": "Teste de integração com a API Java 7",
+      "status": "sucesso",
+      "duracao_s": 0.57,
+      "validacoes": [
+        {
+          "nome": "index.html servido (HTTP 200)",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "Agenda.min.css servido (HTTP 200)",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "Agenda.js servido (HTTP 200)",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "JavaScript gerado contém 'contatos' (mesmo contrato do Flex)",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "JavaScript gerado contém 'suppress_response_codes' (mesmo contrato do Flex)",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "JavaScript gerado contém '_method' (mesmo contrato do Flex)",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "API Java 7 acessível via /api (health UP)",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": "{\"java\": \"1.7.0_221\", \"servidor\": \"Apache Tomcat/7.0.94\", \"banco\": \"MySQL 5.7.44\", \"status\": \"UP\"}"
+        },
+        {
+          "nome": "Backend roda em Java 7",
+          "ok": true,
+          "severidade": "aviso",
+          "detalhe": "1.7.0_221"
+        },
+        {
+          "nome": "Listar contatos (GET /api/contatos)",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": "4 contato(s)"
+        },
+        {
+          "nome": "Criar contato (POST)",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "Atualizar contato (POST + _method=PUT)",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "Erro de validação chega como JSON com 'erro'",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        },
+        {
+          "nome": "Excluir contato (POST + _method=DELETE)",
+          "ok": true,
+          "severidade": "bloqueante",
+          "detalhe": ""
+        }
+      ],
+      "resultado": {
+        "executado": true,
+        "api": "http://backend:8080/api",
+        "chamadas": 6
+      },
+      "erro": ""
+    }
+  ],
+  "tokens": {
+    "analista-flex": {
+      "cache_creation_input_tokens": 36062,
+      "cache_read_input_tokens": 79834,
+      "input_tokens": 10,
+      "output_tokens": 19516
+    }
+  }
+}

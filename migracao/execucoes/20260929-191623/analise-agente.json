@@ -1,0 +1,301 @@
+{
+  "resumo": "Aplicação de Agenda de Contatos em Adobe Flex (MX/Halo) que consome uma API REST/JSON (backend Java 7 + MySQL) via mx.rpc.http.HTTPService encapsulado em br.ufpi.agenda.ApiClient. A tela permite buscar/listar contatos em um DataGrid, selecionar um contato para editar seus dados em um formulário (nome, telefones, e-mails, endereço), adicionar/remover itens de telefone e e-mail em listas locais antes de salvar, criar/atualizar (PUT com override) e excluir (com confirmação via Alert) contatos, e exibe mensagens de status/erro. O layout usa HDividedBox para dividir grade de contatos e formulário, Panel com título dinâmico, ControlBar para ações e validações client-side simples via RegExp para telefone e e-mail.",
+  "arquivos": [
+    {
+      "origem": "Agenda.mxml",
+      "destino": "royale/src/Agenda.mxml",
+      "papel": "Aplicação principal: layout, formulário, grade e lógica de UI/handlers"
+    },
+    {
+      "origem": "br/ufpi/agenda/ApiClient.as",
+      "destino": "royale/src/br/ufpi/agenda/ApiClient.as",
+      "papel": "Cliente REST/JSON da API de contatos (listar, buscar, criar, atualizar, excluir)"
+    }
+  ],
+  "componentes": [
+    {
+      "flex": "mx:Application",
+      "royale": "j:Application + j:initialView + j:View",
+      "observacao": "usar applicationComplete no lugar de creationComplete; mover paddings/verticalGap/backgroundColor para CSS/VerticalLayout"
+    },
+    {
+      "flex": "mx:Button",
+      "royale": "j:Button",
+      "observacao": "label vira text; enabled não existe, tratar no handler ou com bead Disabled; toolTip removido ou bead ToolTip"
+    },
+    {
+      "flex": "mx:ControlBar",
+      "royale": "j:CardActions",
+      "observacao": "itemsHorizontalAlign=\"itemsRight\" no lugar de horizontalAlign=\"right\"; último filho do j:Card"
+    },
+    {
+      "flex": "mx:DataGrid",
+      "royale": "j:DataGrid",
+      "observacao": "localId, dataProvider=ArrayList, change sem parâmetro event, height fixo em px (não 100%)"
+    },
+    {
+      "flex": "mx:DataGridColumn",
+      "royale": "j:DataGridColumn",
+      "observacao": "headerText vira label; width vira columnWidth; colunas com labelFunction precisam de dataField mesmo que não usado diretamente; labelFunction assina (item, IDataGridColumnList)"
+    },
+    {
+      "flex": "mx:Form",
+      "royale": "j:Form",
+      "observacao": "Card que envolve o Form não deve ter height fixo (senão corta campos)"
+    },
+    {
+      "flex": "mx:FormHeading",
+      "royale": "j:FormHeading",
+      "observacao": "label + className='secao' via CSS"
+    },
+    {
+      "flex": "mx:FormItem",
+      "royale": "j:FormItem",
+      "observacao": "required não existe; colocar asterisco no label"
+    },
+    {
+      "flex": "mx:HBox",
+      "royale": "j:HGroup",
+      "observacao": "verticalAlign='middle' vira itemsVerticalAlign='itemsCenter'"
+    },
+    {
+      "flex": "mx:HDividedBox",
+      "royale": "j:HGroup",
+      "observacao": "sem divisor arrastável; usar width em % nos Cards filhos, sem height fixo"
+    },
+    {
+      "flex": "mx:Label",
+      "royale": "j:Label",
+      "observacao": "styleName vira className; bindings de text mantidos"
+    },
+    {
+      "flex": "mx:List",
+      "royale": "j:List",
+      "observacao": "rowCount não existe, usar height fixo em px; dataProvider=ArrayList; width fixo em px dentro de HGroup"
+    },
+    {
+      "flex": "mx:Panel",
+      "royale": "j:Card + j:CardHeader/html:H4 + j:CardPrimaryContent",
+      "observacao": "title dinâmico vira text bindado no H4; Card do formulário sem height fixo (seção 5.2 do guia)"
+    },
+    {
+      "flex": "mx:Spacer",
+      "royale": "j:Spacer",
+      "observacao": "width='100%' igual"
+    },
+    {
+      "flex": "mx:TextInput",
+      "royale": "j:TextInput",
+      "observacao": "maxChars removido; enter funciona igual; width='100%' não expande em FormItem, usar valor fixo quando necessário; toolTip removido"
+    },
+    {
+      "flex": "mx:columns",
+      "royale": "j:columns",
+      "observacao": "mesmo papel de container de colunas do DataGrid"
+    }
+  ],
+  "servicos": [
+    {
+      "operacao": "listar",
+      "metodo_http": "GET",
+      "url": "/contatos?suppress_response_codes=true&_ts={timestamp}&q={filtro}",
+      "contrato": "GET com query opcional q (URL-encoded) se filtro não vazio; resposta: Array JSON de contatos ou {erro, detalhes[]}"
+    },
+    {
+      "operacao": "buscar",
+      "metodo_http": "GET",
+      "url": "/contatos/{id}?suppress_response_codes=true&_ts={timestamp}",
+      "contrato": "GET; resposta: objeto contato JSON ou erro"
+    },
+    {
+      "operacao": "criar",
+      "metodo_http": "POST",
+      "url": "/contatos?suppress_response_codes=true&_ts={timestamp}",
+      "contrato": "POST com contentType application/json, corpo = JSON.stringify(contato sem id ou id null); resposta: contato salvo com id"
+    },
+    {
+      "operacao": "atualizar",
+      "metodo_http": "POST (override PUT)",
+      "url": "/contatos/{id}?suppress_response_codes=true&_ts={timestamp}&_method=PUT",
+      "contrato": "POST simulando PUT via &_method=PUT; corpo = JSON.stringify(contato); resposta: contato salvo"
+    },
+    {
+      "operacao": "excluir",
+      "metodo_http": "POST (override DELETE)",
+      "url": "/contatos/{id}?suppress_response_codes=true&_ts={timestamp}&_method=DELETE",
+      "contrato": "POST simulando DELETE via &_method=DELETE; corpo = '{}'; resposta: objeto de confirmação"
+    }
+  ],
+  "logica": [
+    {
+      "nome": "iniciar",
+      "arquivo": "Agenda.mxml",
+      "descricao": "Handler de creationComplete/applicationComplete; monta ApiClient com URL base (parameters.apiUrl ou 'api'), configura labels do Alert, limpa formulário e carrega lista inicial"
+    },
+    {
+      "nome": "carregar",
+      "arquivo": "Agenda.mxml",
+      "descricao": "Chama api.listar com texto de busca, atualiza ArrayCollection/ArrayList de contatos, mensagem de status, reseleciona item atual na grade se houver"
+    },
+    {
+      "nome": "selecionarNaGrade",
+      "arquivo": "Agenda.mxml",
+      "descricao": "Procura contato por id na coleção e seleciona/rola até ele no DataGrid"
+    },
+    {
+      "nome": "aoSelecionar",
+      "arquivo": "Agenda.mxml",
+      "descricao": "Handler de change do DataGrid; preenche formulário com item selecionado"
+    },
+    {
+      "nome": "rotuloTelefone",
+      "arquivo": "Agenda.mxml",
+      "descricao": "labelFunction de coluna: retorna primeiro telefone + contagem de extras"
+    },
+    {
+      "nome": "rotuloEmail",
+      "arquivo": "Agenda.mxml",
+      "descricao": "labelFunction de coluna: retorna primeiro e-mail + contagem de extras"
+    },
+    {
+      "nome": "rotuloCidade",
+      "arquivo": "Agenda.mxml",
+      "descricao": "labelFunction de coluna: monta string cidade/estado/país do endereço"
+    },
+    {
+      "nome": "primeiro",
+      "arquivo": "Agenda.mxml",
+      "descricao": "Utilitário: retorna primeiro elemento de array com sufixo de contagem, ou padrão se vazio"
+    },
+    {
+      "nome": "novo",
+      "arquivo": "Agenda.mxml",
+      "descricao": "Limpa seleção da grade e formulário para criar novo contato"
+    },
+    {
+      "nome": "limparFormulario",
+      "arquivo": "Agenda.mxml",
+      "descricao": "Reseta idAtual e todos os campos do formulário, inclusive país default 'Brasil'"
+    },
+    {
+      "nome": "preencherFormulario",
+      "arquivo": "Agenda.mxml",
+      "descricao": "Copia dados do contato selecionado para os campos do formulário e coleções de telefone/email"
+    },
+    {
+      "nome": "montarContato",
+      "arquivo": "Agenda.mxml",
+      "descricao": "Monta objeto contato a partir dos campos do formulário e coleções, para enviar à API"
+    },
+    {
+      "nome": "adicionarTelefone",
+      "arquivo": "Agenda.mxml",
+      "descricao": "Valida telefone via regex, adiciona à coleção se não duplicado, limpa campo"
+    },
+    {
+      "nome": "adicionarEmail",
+      "arquivo": "Agenda.mxml",
+      "descricao": "Valida e-mail via regex, adiciona à coleção se não duplicado, limpa campo"
+    },
+    {
+      "nome": "removerSelecionado",
+      "arquivo": "Agenda.mxml",
+      "descricao": "Remove item selecionado de uma lista (telefones ou emails)"
+    },
+    {
+      "nome": "salvar",
+      "arquivo": "Agenda.mxml",
+      "descricao": "Adiciona pendências de telefone/email digitados, valida nome obrigatório, chama api.criar ou api.atualizar conforme idAtual, recarrega lista após sucesso"
+    },
+    {
+      "nome": "confirmarExclusao",
+      "arquivo": "Agenda.mxml",
+      "descricao": "Exibe Alert de confirmação Sim/Não antes de excluir"
+    },
+    {
+      "nome": "excluir",
+      "arquivo": "Agenda.mxml",
+      "descricao": "Handler do Alert de confirmação; se Yes, chama api.excluir e recarrega lista"
+    },
+    {
+      "nome": "ocupar/liberar",
+      "arquivo": "Agenda.mxml",
+      "descricao": "Controlam flag ocupado e mensagem de status durante chamadas assíncronas"
+    },
+    {
+      "nome": "falhou",
+      "arquivo": "Agenda.mxml",
+      "descricao": "Handler de erro genérico: atualiza status e mostra Alert com mensagem completa"
+    },
+    {
+      "nome": "copiar/texto/trim",
+      "arquivo": "Agenda.mxml",
+      "descricao": "Utilitários estáticos de manipulação de array/string"
+    },
+    {
+      "nome": "chamar",
+      "arquivo": "ApiClient.as",
+      "descricao": "Método privado central que monta URL com suppress_response_codes, _ts anti-cache e _method override, envia HTTPService e trata resultado/erro/fault"
+    },
+    {
+      "nome": "listar/buscar/criar/atualizar/excluir",
+      "arquivo": "ApiClient.as",
+      "descricao": "Métodos públicos que delegam para 'chamar' com verbo e caminho apropriados"
+    }
+  ],
+  "riscos": [
+    {
+      "descricao": "enabled={!ocupado} e outras expressões de enabled em botões não existem no Jewel",
+      "mitigacao": "Validar 'ocupado'/condições dentro dos próprios handlers (ex.: if (ocupado) return;) e opcionalmente usar bead Disabled"
+    },
+    {
+      "descricao": "DataGridColumn com labelFunction sem dataField no Flex original",
+      "mitigacao": "Adicionar um dataField válido (ex.: 'id' ou 'nome') nas colunas de telefone/email/cidade para satisfazer o Jewel"
+    },
+    {
+      "descricao": "HDividedBox com divisor arrastável não tem equivalente",
+      "mitigacao": "Usar j:HGroup com larguras fixas em % conforme seção 5.2 do guia, perdendo a funcionalidade de redimensionar"
+    },
+    {
+      "descricao": "Panel com height='100%' e Form dentro pode cortar campos se height for fixado no Card",
+      "mitigacao": "Não definir height no Card do formulário, deixá-lo crescer com o conteúdo (seção 5.2 do guia)"
+    },
+    {
+      "descricao": "grade.scrollToIndex não existe no Jewel",
+      "mitigacao": "Remover a chamada, manter apenas selectedIndex"
+    },
+    {
+      "descricao": "FlexGlobals.topLevelApplication.parameters.apiUrl não existe no Royale",
+      "mitigacao": "Usar diretamente a string fixa 'api' como base da URL, conforme guia"
+    },
+    {
+      "descricao": "Alert.show com handler posicional (this, excluir, null, Alert.NO) não é suportado no Jewel",
+      "mitigacao": "Recriar com new Alert(), AlertModel para yesLabel/noLabel, e addEventListener(CloseEvent.CLOSE, excluir)"
+    },
+    {
+      "descricao": "toolTip em TextInput/Button removido perde dica visual para o usuário",
+      "mitigacao": "Aceitar perda ou usar bead ToolTip quando crítico"
+    },
+    {
+      "descricao": "new Date().time usado em ApiClient.as não existe em JS",
+      "mitigacao": "Trocar por new Date().getTime()"
+    },
+    {
+      "descricao": "mx.rpc.http.HTTPService com useProxy/resultFormat/requestTimeout não existem no Royale",
+      "mitigacao": "Reescrever ApiClient usando org.apache.royale.net.HTTPService conforme seção 8 do guia, mantendo mesma URL/params/métodos"
+    }
+  ],
+  "plano_conversao": [
+    "Criar Agenda.mxml com esqueleto j:Application/j:initialView/j:View, mantendo fx:Style adaptado (classes titulo/secao/status) e bead SimpleCSSValuesImpl + ApplicationDataBinding",
+    "Reescrever o cabeçalho e barra de busca com j:HGroup/j:Label/j:TextInput/j:Button, tratando enabled via lógica no handler",
+    "Converter o HDividedBox em j:HGroup com dois j:Card (55%/45%), sem height fixo no Card do formulário",
+    "Migrar o DataGrid para j:DataGrid com height fixo (ex.: 520), columns com columnWidth/label/dataField, labelFunction assinando (item, IDataGridColumnList)",
+    "Migrar o Form para j:Form com j:FormItem/j:FormHeading, larguras fixas onde necessário (TextInput e List dentro de HGroup), asterisco no label 'Nome *'",
+    "Converter ControlBar em j:CardActions itemsHorizontalAlign='itemsRight' com os três botões (Limpar/Excluir/Salvar)",
+    "Portar toda a lógica AS3 do fx:Script mantendo nomes de funções e variáveis, trocando ArrayCollection por ArrayList, mx.controls.Alert por org.apache.royale.jewel.Alert com AlertModel, removendo setFocus/scrollToIndex/FlexGlobals",
+    "Reescrever br/ufpi/agenda/ApiClient.as usando org.apache.royale.net.HTTPService e org.apache.royale.net.HTTPConstants, preservando exatamente URLs, query params (suppress_response_codes, _ts, _method, q) e métodos GET/POST",
+    "Ajustar tratamento de resultado/erro em ApiClient.as usando eventos COMPLETE/IO_ERROR e JSON.parse/stringify, mantendo a lógica de detectar {erro, detalhes} na resposta",
+    "Revisar todos os bindings ({contatos}, {telefones}, {emails}, {idAtual}, título dinâmico do Card) garantindo que variáveis Bindable sejam public",
+    "Gravar os dois arquivos em royale/src/ preservando estrutura de pacotes"
+  ]
+}

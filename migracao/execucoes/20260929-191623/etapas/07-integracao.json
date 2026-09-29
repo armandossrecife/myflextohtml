@@ -1,0 +1,92 @@
+{
+  "etapa": "07-integracao",
+  "titulo": "Teste de integração com a API Java 7",
+  "status": "sucesso",
+  "duracao_s": 0.88,
+  "validacoes": [
+    {
+      "nome": "index.html servido (HTTP 200)",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "Agenda.min.css servido (HTTP 200)",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "Agenda.js servido (HTTP 200)",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "JavaScript gerado contém 'contatos' (mesmo contrato do Flex)",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "JavaScript gerado contém 'suppress_response_codes' (mesmo contrato do Flex)",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "JavaScript gerado contém '_method' (mesmo contrato do Flex)",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "API Java 7 acessível via /api (health UP)",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": "{\"java\": \"1.7.0_221\", \"servidor\": \"Apache Tomcat/7.0.94\", \"banco\": \"MySQL 5.7.44\", \"status\": \"UP\"}"
+    },
+    {
+      "nome": "Backend roda em Java 7",
+      "ok": true,
+      "severidade": "aviso",
+      "detalhe": "1.7.0_221"
+    },
+    {
+      "nome": "Listar contatos (GET /api/contatos)",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": "3 contato(s)"
+    },
+    {
+      "nome": "Criar contato (POST)",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "Atualizar contato (POST + _method=PUT)",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "Erro de validação chega como JSON com 'erro'",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    },
+    {
+      "nome": "Excluir contato (POST + _method=DELETE)",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": ""
+    }
+  ],
+  "resultado": {
+    "executado": true,
+    "api": "http://backend:8080/api",
+    "chamadas": 6
+  },
+  "erro": ""
+}

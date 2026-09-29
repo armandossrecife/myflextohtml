@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Agenda de Contatos - Frontend Adobe Flex (componentes MX / tema Halo)
+    Comunicação: REST/JSON via mx.rpc.http.HTTPService (ver br.ufpi.agenda.ApiClient)
+-->
+<mx:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+                xmlns:mx="library://ns.adobe.com/flex/mx"
+                layout="vertical"
+                paddingTop="12" paddingBottom="12" paddingLeft="12" paddingRight="12"
+                verticalGap="10"
+                backgroundColor="#F4F6F8"
+                creationComplete="iniciar()">
+
+    <fx:Style>
+        @namespace mx "library://ns.adobe.com/flex/mx";
+        mx|Application { fontFamily: "Arial"; fontSize: 12; color: #222222; }
+        .titulo  { fontSize: 20; fontWeight: bold; color: #1C4E80; }
+        .secao   { fontSize: 13; fontWeight: bold; color: #1C4E80; }
+        .status  { color: #555555; }
+    </fx:Style>
+
+    <fx:Script>
+        <![CDATA[
+            import br.ufpi.agenda.ApiClient;
+
+            import mx.collections.ArrayCollection;
+            import mx.controls.Alert;
+            import mx.controls.List;
+            import mx.controls.dataGridClasses.DataGridColumn;
+            import mx.events.CloseEvent;
+            import mx.core.FlexGlobals;
+            import mx.events.ListEvent;
+
+            private var api:ApiClient;
+
+            [Bindable] private var contatos:ArrayCollection = new ArrayCollection();
+            [Bindable] private var telefones:ArrayCollection = new ArrayCollection();
+            [Bindable] private var emails:ArrayCollection = new ArrayCollection();
+            [Bindable] private var idAtual:Number = NaN;
+            [Bindable] private var ocupado:Boolean = false;
+
+            private static const EMAIL_REGEX:RegExp = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+            private static const TELEFONE_REGEX:RegExp = /^[0-9+()\-.\s]{6,30}$/;
+
+            private function iniciar():void
+            {
+                // A URL da API pode ser passada via FlashVars (apiUrl); o padrão é a mesma origem ("api"),
+                // que o nginx encaminha para o Tomcat.
+                var url:String = FlexGlobals.topLevelApplication.parameters.apiUrl;
+                api = new ApiClient(url != null && url.length > 0 ? url : "api");
+                Alert.yesLabel = "Sim";
+                Alert.noLabel = "Não";
+                Alert.cancelLabel = "Cancelar";
+                limparFormulario();
+                carregar();
+            }
+
+            // ------------------------------------------------------------ listagem
+
+            private function carregar():void
+            {
+                ocupar("Carregando contatos...");
+                api.listar(txtBusca.text, function(lista:Object):void
+                {
+                    contatos = new ArrayCollection(lista as Array);
+                    liberar(contatos.length + " contato(s) encontrado(s).");
+                    if (!isNaN(idAtual)) selecionarNaGrade(idAtual);
+                }, falhou);
+            }
+
+            private function selecionarNaGrade(idProcurado:Number):void
+            {
+                for (var i:int = 0; i < contatos.length; i++)
+                {
+                    if (contatos.getItemAt(i).id == idProcurado)
+                    {
+                        grade.selectedIndex = i;
+                        grade.scrollToIndex(i);
+                        return;
+                    }
+                }
+            }
+
+            private function aoSelecionar(e:ListEvent):void
+            {
+                if (grade.selectedItem != null) preencherFormulario(grade.selectedItem);
+            }
+
+            private function rotuloTelefone(item:Object, col:DataGridColumn):String
+            {
+                return primeiro(item.telefones, "");
+            }
+
+            private function rotuloEmail(item:Object, col:DataGridColumn):String
+            {
+                return primeiro(item.emails, "");
+            }
+
+            private function rotuloCidade(item:Object, col:DataGridColumn):String
+            {
+                var e:Object = item.endereco;
+                if (e == null) return "";
+                var partes:Array = [];
+                if (e.cidade) partes.push(e.cidade);
+                if (e.estado) partes.push(e.estado);
+                if (e.pais) partes.push(e.pais);
+                return partes.join(" / ");
+            }
+
+            private function primeiro(lista:Object, padrao:String):String
+            {
+                var a:Array = lista as Array;
+                if (a == null || a.length == 0) return padrao;
+                return a.length > 1 ? a[0] + "  (+" + (a.length - 1) + ")" : String(a[0]);
+            }
+
+            // ------------------------------------------------------------ formulário
+
+            private function novo():void
+            {
+                grade.selectedIndex = -1;
+                limparFormulario();
+                txtNome.setFocus();
+            }
+
+            private function limparFormulario():void
+            {
+                idAtual = NaN;
+                txtNome.text = "";
+                txtTelefone.text = "";
+                txtEmail.text = "";
+                txtRua.text = "";
+                txtCep.text = "";
+                txtCidade.text = "";
+                txtEstado.text = "";
+                txtPais.text = "Brasil";
+                telefones = new ArrayCollection();
+                emails = new ArrayCollection();
+            }
+
+            private function preencherFormulario(c:Object):void
+            {
+                idAtual = c.id;
+                txtNome.text = texto(c.nome);
+                telefones = new ArrayCollection(copiar(c.telefones));
+                emails = new ArrayCollection(copiar(c.emails));
+                var e:Object = c.endereco != null ? c.endereco : {};
+                txtRua.text = texto(e.rua);
+                txtCep.text = texto(e.cep);
+                txtCidade.text = texto(e.cidade);
+                txtEstado.text = texto(e.estado);
+                txtPais.text = texto(e.pais);
+                txtTelefone.text = "";
+                txtEmail.text = "";
+            }
+
+            private function montarContato():Object
+            {
+                return {
+                    id: isNaN(idAtual) ? null : idAtual,
+                    nome: txtNome.text,
+                    telefones: telefones.source.concat(),
+                    emails: emails.source.concat(),
+                    endereco: {
+                        rua: txtRua.text,
+                        cep: txtCep.text,
+                        cidade: txtCidade.text,
+                        estado: txtEstado.text,
+                        pais: txtPais.text
+                    }
+                };
+            }
+
+            // ------------------------------------------------------------ listas (telefones / e-mails)
+
+            private function adicionarTelefone():void
+            {
+                var t:String = trim(txtTelefone.text);
+                if (t.length == 0) return;
+                if (!TELEFONE_REGEX.test(t))
+                {
+                    Alert.show("Telefone inválido. Use apenas números, espaços e + ( ) - .", "Validação");
+                    return;
+                }
+                if (telefones.getItemIndex(t) < 0) telefones.addItem(t);
+                txtTelefone.text = "";
+                txtTelefone.setFocus();
+            }
+
+            private function adicionarEmail():void
+            {
+                var e:String = trim(txtEmail.text);
+                if (e.length == 0) return;
+                if (!EMAIL_REGEX.test(e))
+                {
+                    Alert.show("E-mail inválido.", "Validação");
+                    return;
+                }
+                if (emails.getItemIndex(e) < 0) emails.addItem(e);
+                txtEmail.text = "";
+                txtEmail.setFocus();
+            }
+
+            private function removerSelecionado(lista:List, dados:ArrayCollection):void
+            {
+                if (lista.selectedIndex >= 0) dados.removeItemAt(lista.selectedIndex);
+            }
+
+            // ------------------------------------------------------------ CRUD
+
+            private function salvar():void
+            {
+                // Itens digitados mas não adicionados entram automaticamente
+                if (trim(txtTelefone.text).length > 0) adicionarTelefone();
+                if (trim(txtEmail.text).length > 0) adicionarEmail();
+
+                if (trim(txtNome.text).length == 0)
+                {
+                    Alert.show("O nome é obrigatório.", "Validação");
+                    txtNome.setFocus();
+                    return;
+                }
+
+                var c:Object = montarContato();
+                var aoSalvar:Function = function(salvo:Object):void
+                {
+                    idAtual = salvo.id;
+                    liberar("Contato \"" + salvo.nome + "\" salvo (id " + salvo.id + ").");
+                    carregar();
+                };
+
+                if (isNaN(idAtual))
+                {
+                    ocupar("Criando contato...");
+                    api.criar(c, aoSalvar, falhou);
+                }
+                else
+                {
+                    ocupar("Atualizando contato " + idAtual + "...");
+                    api.atualizar(c, aoSalvar, falhou);
+                }
+            }
+
+            private function confirmarExclusao():void
+            {
+                if (isNaN(idAtual)) return;
+                Alert.show("Excluir o contato \"" + txtNome.text + "\"?", "Confirmação",
+                    Alert.YES | Alert.NO, this, excluir, null, Alert.NO);
+            }
+
+            private function excluir(e:CloseEvent):void
+            {
+                if (e.detail != Alert.YES) return;
+                var idExcluir:Number = idAtual;
+                ocupar("Excluindo contato " + idExcluir + "...");
+                api.excluir(idExcluir, function(r:Object):void
+                {
+                    limparFormulario();
+                    liberar("Contato " + idExcluir + " excluído.");
+                    carregar();
+                }, falhou);
+            }
+
+            // ------------------------------------------------------------ utilitários
+
+            private function ocupar(msg:String):void
+            {
+                ocupado = true;
+                lblStatus.text = msg;
+            }
+
+            private function liberar(msg:String):void
+            {
+                ocupado = false;
+                lblStatus.text = msg;
+            }
+
+            private function falhou(msg:String):void
+            {
+                liberar("Erro: " + msg.split("\n")[0]);
+                Alert.show(msg, "Erro");
+            }
+
+            private static function copiar(lista:Object):Array
+            {
+                var a:Array = lista as Array;
+                return a != null ? a.concat() : [];
+            }
+
+            private static function texto(v:Object):String
+            {
+                return v == null ? "" : String(v);
+            }
+
+            private static function trim(s:String):String
+            {
+                return s == null ? "" : s.replace(/^\s+|\s+$/g, "");
+            }
+        ]]>
+    </fx:Script>
+
+    <!-- Cabeçalho -->
+    <mx:HBox width="100%" verticalAlign="middle">
+        <mx:Label text="Agenda de Contatos" styleName="titulo"/>
+        <mx:Spacer width="100%"/>
+        <mx:Label text="Adobe Flex + Java 7 (REST/JSON) + MySQL 5.7" styleName="status"/>
+    </mx:HBox>
+
+    <!-- Barra de busca -->
+    <mx:HBox width="100%" verticalAlign="middle">
+        <mx:Label text="Buscar:"/>
+        <mx:TextInput id="txtBusca" width="100%" enter="carregar()"
+                      toolTip="Nome, e-mail ou telefone"/>
+        <mx:Button label="Buscar" click="carregar()" enabled="{!ocupado}"/>
+        <mx:Button label="Limpar busca" click="txtBusca.text=''; carregar()" enabled="{!ocupado}"/>
+        <mx:Button label="Novo contato" click="novo()"/>
+    </mx:HBox>
+
+    <mx:HDividedBox width="100%" height="100%">
+
+        <!-- Grade de contatos -->
+        <mx:Panel title="Contatos" width="55%" height="100%" layout="vertical">
+            <mx:DataGrid id="grade" width="100%" height="100%" dataProvider="{contatos}"
+                         change="aoSelecionar(event)">
+                <mx:columns>
+                    <mx:DataGridColumn headerText="ID" dataField="id" width="45"/>
+                    <mx:DataGridColumn headerText="Nome" dataField="nome"/>
+                    <mx:DataGridColumn headerText="Telefone" labelFunction="rotuloTelefone"/>
+                    <mx:DataGridColumn headerText="E-mail" labelFunction="rotuloEmail"/>
+                    <mx:DataGridColumn headerText="Cidade / UF / País" labelFunction="rotuloCidade"/>
+                </mx:columns>
+            </mx:DataGrid>
+        </mx:Panel>
+
+        <!-- Formulário -->
+        <mx:Panel title="{isNaN(idAtual) ? 'Novo contato' : 'Editando contato #' + idAtual}"
+                  width="45%" height="100%" layout="vertical">
+            <mx:Form width="100%" height="100%" paddingTop="6" verticalGap="6">
+
+                <mx:FormItem label="ID">
+                    <mx:Label text="{isNaN(idAtual) ? '(gerado ao salvar)' : String(idAtual)}"/>
+                </mx:FormItem>
+                <mx:FormItem label="Nome" required="true" width="100%">
+                    <mx:TextInput id="txtNome" width="100%" maxChars="120"/>
+                </mx:FormItem>
+
+                <mx:FormHeading label="Telefones" styleName="secao"/>
+                <mx:FormItem label="Telefone" width="100%">
+                    <mx:HBox width="100%">
+                        <mx:TextInput id="txtTelefone" width="100%" maxChars="30" enter="adicionarTelefone()"/>
+                        <mx:Button label="+" toolTip="Adicionar telefone" click="adicionarTelefone()"/>
+                    </mx:HBox>
+                    <mx:HBox width="100%">
+                        <mx:List id="lstTelefones" width="100%" rowCount="3" dataProvider="{telefones}"/>
+                        <mx:Button label="Remover" click="removerSelecionado(lstTelefones, telefones)"
+                                   enabled="{lstTelefones.selectedIndex &gt;= 0}"/>
+                    </mx:HBox>
+                </mx:FormItem>
+
+                <mx:FormHeading label="E-mails" styleName="secao"/>
+                <mx:FormItem label="E-mail" width="100%">
+                    <mx:HBox width="100%">
+                        <mx:TextInput id="txtEmail" width="100%" maxChars="150" enter="adicionarEmail()"/>
+                        <mx:Button label="+" toolTip="Adicionar e-mail" click="adicionarEmail()"/>
+                    </mx:HBox>
+                    <mx:HBox width="100%">
+                        <mx:List id="lstEmails" width="100%" rowCount="3" dataProvider="{emails}"/>
+                        <mx:Button label="Remover" click="removerSelecionado(lstEmails, emails)"
+                                   enabled="{lstEmails.selectedIndex &gt;= 0}"/>
+                    </mx:HBox>
+                </mx:FormItem>
+
+                <mx:FormHeading label="Endereço" styleName="secao"/>
+                <mx:FormItem label="Rua" width="100%">
+                    <mx:TextInput id="txtRua" width="100%" maxChars="200"/>
+                </mx:FormItem>
+                <mx:FormItem label="CEP" width="100%">
+                    <mx:TextInput id="txtCep" width="120" maxChars="20"/>
+                </mx:FormItem>
+                <mx:FormItem label="Cidade" width="100%">
+                    <mx:TextInput id="txtCidade" width="100%" maxChars="100"/>
+                </mx:FormItem>
+                <mx:FormItem label="Estado" width="100%">
+                    <mx:TextInput id="txtEstado" width="100%" maxChars="60"/>
+                </mx:FormItem>
+                <mx:FormItem label="País" width="100%">
+                    <mx:TextInput id="txtPais" width="100%" maxChars="60"/>
+                </mx:FormItem>
+            </mx:Form>
+
+            <mx:ControlBar horizontalAlign="right">
+                <mx:Button label="Limpar" click="novo()" enabled="{!ocupado}"/>
+                <mx:Button label="Excluir" click="confirmarExclusao()"
+                           enabled="{!ocupado &amp;&amp; !isNaN(idAtual)}"/>
+                <mx:Button label="Salvar" click="salvar()" enabled="{!ocupado}" fontWeight="bold"/>
+            </mx:ControlBar>
+        </mx:Panel>
+    </mx:HDividedBox>
+
+    <mx:Label id="lblStatus" width="100%" styleName="status" text="Pronto."/>
+</mx:Application>

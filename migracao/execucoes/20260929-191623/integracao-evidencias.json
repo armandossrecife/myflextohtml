@@ -1,0 +1,147 @@
+{
+  "base": "http://127.0.0.1:35477",
+  "api": "http://backend:8080/api",
+  "chamadas": [
+    {
+      "descricao": "health",
+      "metodo": "GET",
+      "url": "/api/health",
+      "status": 200,
+      "resposta": {
+        "java": "1.7.0_221",
+        "servidor": "Apache Tomcat/7.0.94",
+        "banco": "MySQL 5.7.44",
+        "status": "UP"
+      }
+    },
+    {
+      "descricao": "listar",
+      "metodo": "GET",
+      "url": "/api/contatos?suppress_response_codes=true&_ts=1",
+      "status": 200,
+      "resposta": [
+        {
+          "id": 1,
+          "nome": "Ana Beatriz Sousa",
+          "telefones": [
+            "(86) 3215-5500",
+            "(86) 99999-1234"
+          ],
+          "emails": [
+            "ana.sousa@exemplo.com.br",
+            "ana@ufpi.edu.br"
+          ],
+          "endereco": {
+            "rua": "Av. Universitária, 1310",
+            "cep": "64049-550",
+            "cidade": "Teresina",
+            "estado": "PI",
+            "pais": "Brasil"
+          }
+        },
+        {
+          "id": 2,
+          "nome": "Carlos Eduardo Lima",
+          "telefones": [
+            "(85) 98888-4321"
+          ],
+          "emails": [
+            "carlos.lima@exemplo.com.br"
+          ],
+          "endereco": {
+            "rua": "Rua das Flores, 45",
+            "cep": "60115-000",
+            "cidade": "Fortaleza",
+            "estado": "CE",
+            "pais": "Brasil"
+          }
+        },
+        {
+          "id": 3,
+          "nome": "María Fernández",
+          "telefones": [
+            "+507 6000-1111"
+          ],
+          "emails": [
+            "maria.fernandez@ejemplo.com.pa"
+          ],
+          "endereco": {
+            "rua": "Calle 50, Edificio Sol",
+            "cep": "0801",
+            "cidade": "Ciudad de Panamá",
+            "estado": "Panamá",
+            "pais": "Panamá"
+          }
+        }
+      ]
+    },
+    {
+      "descricao": "criar",
+      "metodo": "POST",
+      "url": "/api/contatos?suppress_response_codes=true&_ts=1",
+      "status": 200,
+      "resposta": {
+        "id": 4,
+        "nome": "Teste Pipeline Migração",
+        "telefones": [
+          "(86) 3000-0000"
+        ],
+        "emails": [
+          "pipeline@teste.com"
+        ],
+        "endereco": {
+          "rua": "Rua do Teste, 1",
+          "cep": "64000-000",
+          "cidade": "Teresina",
+          "estado": "PI",
+          "pais": "Brasil"
+        }
+      }
+    },
+    {
+      "descricao": "atualizar",
+      "metodo": "POST",
+      "url": "/api/contatos/4?suppress_response_codes=true&_ts=1&_method=PUT",
+      "status": 200,
+      "resposta": {
+        "id": 4,
+        "nome": "Teste Pipeline Migração (editado)",
+        "telefones": [
+          "(86) 3000-0000"
+        ],
+        "emails": [
+          "pipeline@teste.com"
+        ],
+        "endereco": {
+          "rua": "Rua do Teste, 1",
+          "cep": "64000-000",
+          "cidade": "Teresina",
+          "estado": "PI",
+          "pais": "Brasil"
+        }
+      }
+    },
+    {
+      "descricao": "validação",
+      "metodo": "POST",
+      "url": "/api/contatos?suppress_response_codes=true&_ts=1",
+      "status": 200,
+      "resposta": {
+        "erro": "O nome é obrigatório",
+        "status": 400,
+        "detalhes": [
+          "O nome é obrigatório"
+        ]
+      }
+    },
+    {
+      "descricao": "excluir",
+      "metodo": "POST",
+      "url": "/api/contatos/4?suppress_response_codes=true&_ts=1&_method=DELETE",
+      "status": 200,
+      "resposta": {
+        "excluido": 4
+      }
+    }
+  ]
+}

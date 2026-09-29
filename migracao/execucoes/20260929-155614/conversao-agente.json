@@ -1,0 +1,22 @@
+{
+  "resumo": "Conversão completa da Agenda de Contatos de Adobe Flex (MX) para Apache Royale 0.9.12 (Jewel). Agenda.mxml foi reescrito com o esqueleto j:Application/j:initialView/j:View, VerticalLayout, ApplicationDataBinding e SimpleCSSValuesImpl. Painel de listagem virou j:Card com j:DataGrid (height=520, labelFunctions com IDataGridColumnList e dataField obrigatório em todas as colunas). Painel de formulário virou j:Card sem height (para não cortar campos) contendo j:Form, j:FormItem/j:FormHeading e j:CardActions com os botões Limpar/Excluir/Salvar. ArrayCollection foi trocada por ArrayList, mx.controls.Alert pela classe Alert do Jewel com AlertModel para os rótulos Sim/Não, e o ApiClient foi reescrito com org.apache.royale.net.HTTPService mantendo exatamente a mesma URL, verbos (POST com _method=PUT|DELETE), suppress_response_codes=true e _ts anti-cache.",
+  "arquivos": [
+    "royale/src/Agenda.mxml",
+    "royale/src/br/ufpi/agenda/ApiClient.as"
+  ],
+  "decisoes": [
+    "Removido enabled='{}' dos botões (Buscar, Limpar busca, Limpar, Excluir, Salvar); a lógica de bloqueio por 'ocupado' e de contato selecionado passou para guarda (if) no início dos handlers carregar(), limparBusca(), salvar() e confirmarExclusao()",
+    "Removidos toolTip e maxChars de TextInput/Button (não suportados/erro no Jewel)",
+    "required='true' do FormItem 'Nome' virou asterisco no label ('Nome *')",
+    "grade.scrollToIndex removido de selecionarNaGrade (não existe no Jewel DataGrid); mantido apenas selectedIndex",
+    "FlexGlobals.topLevelApplication.parameters.apiUrl substituído por base fixa 'api', conforme guia",
+    "Colunas do DataGrid com labelFunction receberam dataField explícito (telefones/emails/endereco) pois o Jewel exige essa propriedade mesmo quando o valor exibido vem da função",
+    "Alert.yesLabel/noLabel estáticos substituídos por instância de Alert + AlertModel na confirmação de exclusão",
+    "Label de status do cabeçalho atualizado de 'Adobe Flex' para 'Apache Royale' para refletir a nova stack de frontend (mesmo texto descritivo, apenas o nome do framework)",
+    "TextInput e List dentro de FormItem/HGroup receberam largura fixa em pixels (320, 200, 280, 120) em vez de width=100%, conforme armadilha de layout do guia",
+    "HTTPService do ApiClient reescrito sem useProxy/resultFormat/requestTimeout/ResultEvent/FaultEvent, usando eventos COMPLETE/IO_ERROR e checagem de servico.status, mantendo idêntico o contrato de URLs e parâmetros"
+  ],
+  "pendencias": [
+    "setFocus() removido de txtNome/txtTelefone/txtEmail após ações (novo, adicionarTelefone, adicionarEmail, validação de salvar) por não haver equivalente no Jewel; o foco automático no campo não ocorre mais, apenas a limpeza/validação"
+  ]
+}

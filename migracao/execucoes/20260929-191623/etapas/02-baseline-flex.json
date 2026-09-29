@@ -1,0 +1,25 @@
+{
+  "etapa": "02-baseline-flex",
+  "titulo": "Compilação de referência do Flex",
+  "status": "sucesso",
+  "duracao_s": 1.4,
+  "validacoes": [
+    {
+      "nome": "Código Flex original compila (SWF gerado)",
+      "ok": true,
+      "severidade": "bloqueante",
+      "detalhe": "Agenda.swf (432282 bytes)"
+    }
+  ],
+  "resultado": {
+    "executada": true,
+    "sucesso": true,
+    "codigo_saida": 0,
+    "duracao_s": 1.4,
+    "artefatos": [
+      "Agenda.swf (432282 bytes)"
+    ],
+    "erros": []
+  },
+  "erro": ""
+}
