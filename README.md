@@ -210,6 +210,13 @@ Recursos do Java 7 usados no backend: operador diamond (`new ArrayList<>()`), tr
 
 ---
 
+## Telas
+
+![Tela Orinal](tela_original_flex.png)
+
+![Tela Migrada para HTML](tela_migrada_html.png)
+
+
 ## Solução de problemas
 
 | Sintoma | Causa provável e solução |
