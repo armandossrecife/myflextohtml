@@ -212,7 +212,11 @@ Recursos do Java 7 usados no backend: operador diamond (`new ArrayList<>()`), tr
 
 ## Telas
 
+### Tela original Flex
+
 ![Tela Orinal](tela_original_flex.png)
+
+### Tela migrada para HTML
 
 ![Tela Migrada para HTML](tela_migrada_html.png)
 
