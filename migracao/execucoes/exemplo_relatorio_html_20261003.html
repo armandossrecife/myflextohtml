@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório de Migração Flex → HTML5 (Apache Royale)</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0f172a;
+    --bg-soft:#1e293b;
+    --card:#ffffff;
+    --text:#0f172a;
+    --muted:#64748b;
+    --border:#e2e8f0;
+    --primary:#2563eb;
+    --primary-soft:#dbeafe;
+    --success:#16a34a;
+    --success-soft:#dcfce7;
+    --warn:#f59e0b;
+    --warn-soft:#fef3c7;
+    --danger:#dc2626;
+    --danger-soft:#fee2e2;
+    --info:#0ea5e9;
+    --royale:#7c3aed;
+    --flex:#e11d48;
+  }
+  *{box-sizing:border-box;}
+  body{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin:0;
+    background:#f1f5f9;
+    color:var(--text);
+    line-height:1.6;
+  }
+  header.hero{
+    background: linear-gradient(135deg, #1e3a8a 0%, #7c3aed 100%);
+    color:#fff;
+    padding: 48px 32px 56px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.hero::after{
+    content:"";
+    position:absolute;
+    bottom:-40px; right:-40px;
+    width:260px;height:260px;
+    border-radius:50%;
+    background: rgba(255,255,255,.08);
+  }
+  header.hero h1{
+    margin:0 0 8px;
+    font-size:2rem;
+    letter-spacing:-.5px;
+  }
+  header.hero p.subtitle{
+    margin:0;
+    opacity:.9;
+    font-size:1.05rem;
+  }
+  .hero-badges{
+    margin-top:24px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background: rgba(255,255,255,.15);
+    border:1px solid rgba(255,255,255,.25);
+    padding:6px 12px;
+    border-radius:999px;
+    font-size:.85rem;
+    backdrop-filter: blur(4px);
+  }
+  .badge strong{font-weight:600;}
+  .container{
+    max-width:1180px;
+    margin:-32px auto 64px;
+    padding:0 24px;
+  }
+  .card{
+    background:var(--card);
+    border-radius:16px;
+    box-shadow:0 4px 20px rgba(15,23,42,.06);
+    padding:28px 32px;
+    margin-bottom:24px;
+    border:1px solid var(--border);
+  }
+  h2{
+    font-size:1.4rem;
+    margin:0 0 4px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  h2 .num{
+    display:inline-flex;
+    align-items:center;justify-content:center;
+    width:34px;height:34px;
+    background:var(--primary-soft);
+    color:var(--primary);
+    font-size:.95rem;
+    font-weight:700;
+    border-radius:10px;
+  }
+  h3{font-size:1.05rem;margin:22px 0 10px;color:#334155;}
+  .section-desc{color:var(--muted);margin:0 0 18px;font-size:.95rem;}
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin:12px 0 4px;
+    font-size:.9rem;
+  }
+  th,td{
+    text-align:left;
+    padding:10px 12px;
+    border-bottom:1px solid var(--border);
+    vertical-align:top;
+  }
+  th{
+    background:#f8fafc;
+    font-weight:600;
+    color:#334155;
+    font-size:.85rem;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+  }
+  tr:last-child td{border-bottom:none;}
+  td code, code{
+    background:#f1f5f9;
+    padding:2px 6px;
+    border-radius:5px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:.85em;
+    color:#334155;
+  }
+  .status{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:.78rem;font-weight:600;}
+  .status.ok{background:var(--success-soft);color:var(--success);}
+  .status.warn{background:var(--warn-soft);color:#b45309;}
+  .status.fail{background:var(--danger-soft);color:var(--danger);}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  @media(max-width:820px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}}
+
+  .stat{
+    background:#f8fafc;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px;
+    text-align:center;
+  }
+  .stat .value{font-size:1.6rem;font-weight:700;color:var(--primary);line-height:1.1;}
+  .stat .label{font-size:.8rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.04em;}
+  .stat.green .value{color:var(--success);}
+  .stat.purple .value{color:var(--royale);}
+  .stat.rose .value{color:var(--flex);}
+
+  .pipeline{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:center;
+    justify-content:center;
+    margin:20px 0;
+  }
+  .pipe-step{
+    background:#f8fafc;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:8px 14px;
+    font-size:.82rem;
+    font-weight:600;
+    color:#334155;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .pipe-step .dot{
+    width:8px;height:8px;border-radius:50%;background:var(--success);
+    box-shadow:0 0 0 3px var(--success-soft);
+  }
+  .pipe-arrow{color:#94a3b8;font-weight:700;}
+
+  .chart-wrap{position:relative;height:280px;margin:16px 0;}
+  .chart-wrap.tall{height:340px;}
+
+  .timeline-item{
+    display:flex;
+    gap:16px;
+    padding:16px 0;
+    border-bottom:1px dashed var(--border);
+  }
+  .timeline-item:last-child{border-bottom:none;}
+  .timeline-marker{
+    flex-shrink:0;
+    width:40px;height:40px;
+    border-radius:10px;
+    background:var(--primary-soft);
+    color:var(--primary);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;
+    font-size:.85rem;
+  }
+  .timeline-body{flex:1;}
+  .timeline-body h4{margin:0 0 4px;font-size:.98rem;}
+  .timeline-body .meta{color:var(--muted);font-size:.82rem;margin-bottom:8px;}
+
+  details{
+    background:#f8fafc;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:10px 14px;
+    margin:10px 0;
+  }
+  details summary{
+    cursor:pointer;
+    font-weight:600;
+    color:#334155;
+    font-size:.9rem;
+  }
+  details[open] summary{margin-bottom:10px;}
+
+  .note{
+    border-left:4px solid var(--info);
+    background:#f0f9ff;
+    padding:12px 16px;
+    border-radius:0 8px 8px 0;
+    margin:14px 0;
+    font-size:.9rem;
+  }
+  .note.warn{border-left-color:var(--warn);background:#fffbeb;}
+  .note.success{border-left-color:var(--success);background:#f0fdf4;}
+  .note strong{color:#0f172a;}
+
+  .kv{display:grid;grid-template-columns:180px 1fr;gap:6px 16px;font-size:.9rem;}
+  .kv .k{color:var(--muted);}
+  .kv .v{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;word-break:break-all;}
+
+  footer.report-footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:.82rem;
+    padding:32px 24px 48px;
+  }
+
+  ul.tight{margin:8px 0;padding-left:22px;}
+  ul.tight li{margin-bottom:4px;font-size:.9rem;}
+
+  .tag{
+    display:inline-block;
+    background:#eef2ff;
+    color:#4338ca;
+    padding:2px 8px;
+    border-radius:6px;
+    font-size:.75rem;
+    font-weight:600;
+    margin-right:4px;
+    margin-bottom:4px;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>Relatório de Migração — Agenda de Contatos</h1>
+  <p class="subtitle">Adobe Flex (MX) → Apache Royale (Jewel) → HTML5 + CSS + JavaScript</p>
+  <div class="hero-badges">
+    <span class="badge">✅ <strong>Migração concluída</strong></span>
+    <span class="badge">🗓️ <strong>03/10/2026 · 11:07</strong></span>
+    <span class="badge">⏱️ <strong>200s de pipeline</strong></span>
+    <span class="badge">🤖 <strong>claude-sonnet-5</strong></span>
+    <span class="badge">🏷️ <code>20261003-110418</code></span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ====================== VISÃO GERAL ====================== -->
+  <section class="card">
+    <h2><span class="num">§</span> Visão geral</h2>
+    <p class="section-desc">
+      Este relatório descreve, etapa por etapa, a migração automatizada de uma aplicação Flex
+      (<em>Agenda de Contatos</em>, CRUD REST/JSON) para uma aplicação HTML5 pura
+      (HTML + CSS + JavaScript), usando o <strong>Apache Royale</strong> como plataforma intermediária
+      de conversão. O pipeline foi executado em modo agente (Claude), com validações bloqueantes
+      e um agente assistente do compilador.
+    </p>
+
+    <div class="grid-4">
+      <div class="stat green"><div class="value">7/7</div><div class="label">Etapas concluídas</div></div>
+      <div class="stat green"><div class="value">55/55</div><div class="label">Validações aprovadas</div></div>
+      <div class="stat purple"><div class="value">2</div><div class="label">Arquivos convertidos</div></div>
+      <div class="stat rose"><div class="value">0</div><div class="label">Avisos finais</div></div>
+    </div>
+
+    <h3>Pipeline de migração</h3>
+    <div class="pipeline">
+      <div class="pipe-step"><span class="dot"></span>01 · Preparação</div>
+      <span class="pipe-arrow">→</span>
+      <div class="pipe-step"><span class="dot"></span>02 · Baseline Flex</div>
+      <span class="pipe-arrow">→</span>
+      <div class="pipe-step"><span class="dot"></span>03 · Análise</div>
+      <span class="pipe-arrow">→</span>
+      <div class="pipe-step"><span class="dot"></span>04 · Conversão</div>
+      <span class="pipe-arrow">→</span>
+      <div class="pipe-step"><span class="dot"></span>05 · Compilação</div>
+      <span class="pipe-arrow">→</span>
+      <div class="pipe-step"><span class="dot"></span>06 · Empacotamento</div>
+      <span class="pipe-arrow">→</span>
+      <div class="pipe-step"><span class="dot"></span>07 · Integração</div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <h3>Origem (Flex)</h3>
+        <div class="kv">
+          <div class="k">Caminho</div><div class="v">/workspace/agenda-contatos/frontend</div>
+          <div class="k">Arquivos</div><div class="v">Agenda.mxml · br/ufpi/agenda/ApiClient.as</div>
+          <div class="k">Linhas totais</div><div class="v">524</div>
+          <div class="k">Componentes</div><div class="v">16 tipos MX</div>
+          <div class="k">Endpoints</div><div class="v">/contatos</div>
+        </div>
+      </div>
+      <div>
+        <h3>Destino (HTML5)</h3>
+        <div class="kv">
+          <div class="k">Caminho</div><div class="v">/workspace/agenda-contatos-html5</div>
+          <div class="k">Artefatos</div><div class="v">index.html · Agenda.js · Agenda.min.css</div>
+          <div class="k">Tamanho JS</div><div class="v">485 948 bytes</div>
+          <div class="k">Backend</div><div class="v">Java 7 · Tomcat 7.0.94 · MySQL 5.7.44</div>
+          <div class="k">Porta HTTP</div><div class="v">8082 (nginx → /api)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note success">
+      <strong>Resultado:</strong> migração concluída com 0 avisos. A aplicação HTML5 gerada preserva
+      integralmente o contrato REST do Flex original (<code>/contatos</code>,
+      <code>suppress_response_codes</code>, <code>_method</code>), permitindo reuso direto do backend Java 7.
+    </div>
+  </section>
+
+  <!-- ====================== APLICAÇÃO ====================== -->
+  <section class="card">
+    <h2><span class="num">§</span> O que a aplicação faz</h2>
+    <p class="section-desc">
+      Síntese da análise produzida pelo agente analista (<code>analise-agente.json</code>).
+    </p>
+
+    <p>
+      Aplicação Flex de <strong>agenda de contatos (CRUD)</strong> que consome uma API REST/JSON
+      (<code>/contatos</code>) via <code>HTTPService</code>. Tela única com busca, grid de contatos
+      (<code>DataGrid</code>) à esquerda e formulário de edição/criação à direita (nome, telefones,
+      e-mails, endereço). Permite listar com filtro, selecionar um contato na grade para editar,
+      adicionar/remover telefones e e-mails em listas locais antes de salvar, criar, atualizar e
+      excluir contatos (com confirmação via <code>Alert</code>). A comunicação é encapsulada na
+      classe <code>ApiClient</code>, que usa truques de compatibilidade com Flash
+      (<code>POST</code> com <code>_method=PUT/DELETE</code>, <code>suppress_response_codes</code>,
+      <code>_ts</code> anti-cache).
+    </p>
+
+    <div class="grid-2">
+      <div>
+        <h3>Arquivos migrados</h3>
+        <table>
+          <thead><tr><th>Origem</th><th>Destino</th><th>Papel</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><code>Agenda.mxml</code></td>
+              <td><code>royale/src/Agenda.mxml</code></td>
+              <td>Aplicação principal: tela de busca, grid e formulário CRUD.</td>
+            </tr>
+            <tr>
+              <td><code>br/ufpi/agenda/ApiClient.as</code></td>
+              <td><code>royale/src/br/ufpi/agenda/ApiClient.as</code></td>
+              <td>Cliente REST/JSON: listar, buscar, criar, atualizar e excluir em <code>/contatos</code>.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h3>Operações da API (contrato preservado)</h3>
+        <table>
+          <thead><tr><th>Operação</th><th>Método</th><th>URL</th></tr></thead>
+          <tbody>
+            <tr><td>Listar (com filtro <code>q</code>)</td><td>GET</td><td><code>/contatos?…&amp;q={filtro}</code></td></tr>
+            <tr><td>Buscar por id</td><td>GET</td><td><code>/contatos/{id}</code></td></tr>
+            <tr><td>Criar</td><td>POST</td><td><code>/contatos</code></td></tr>
+            <tr><td>Atualizar</td><td>POST <code>_method=PUT</code></td><td><code>/contatos/{id}</code></td></tr>
+            <tr><td>Excluir</td><td>POST <code>_method=DELETE</code></td><td><code>/contatos/{id}</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <h3>Mapeamento de componentes Flex → Royale</h3>
+    <p class="section-desc">
+      16 tipos de componentes MX foram mapeados para equivalentes Jewel no Royale. A tabela abaixo
+      resume as decisões de conversão.
+    </p>
+    <table>
+      <thead>
+        <tr><th>Flex (MX)</th><th>Royale (Jewel)</th><th>Observação</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>mx:Application</code></td><td><code>j:Application</code> + <code>j:initialView</code>/<code>j:View</code></td><td><code>applicationComplete</code> no lugar de <code>creationComplete</code>; paddings e gaps viram CSS/VerticalLayout.</td></tr>
+        <tr><td><code>mx:Button</code></td><td><code>j:Button</code></td><td><code>label</code> → <code>text</code>; <code>enabled</code> via bead <code>j:Disabled</code>.</td></tr>
+        <tr><td><code>mx:ControlBar</code></td><td><code>j:CardActions</code></td><td><code>itemsHorizontalAlign="itemsRight"</code>; requer estar dentro de um <code>j:Card</code>.</td></tr>
+        <tr><td><code>mx:DataGrid</code></td><td><code>j:DataGrid</code></td><td><code>labelFunction(item, IDataGridColumnList)</code>; altura fixa em pixels.</td></tr>
+        <tr><td><code>mx:DataGridColumn</code></td><td><code>j:DataGridColumn</code></td><td><code>headerText</code>→<code>label</code>; <code>width</code>→<code>columnWidth</code>.</td></tr>
+        <tr><td><code>mx:Form</code></td><td><code>j:Form</code></td><td>O Card que envolve o Form não deve ter altura fixa (senão corta campos).</td></tr>
+        <tr><td><code>mx:FormHeading</code></td><td><code>j:FormHeading</code></td><td><code>label</code> e <code>styleName</code>→<code>className</code>.</td></tr>
+        <tr><td><code>mx:FormItem</code></td><td><code>j:FormItem</code></td><td><code>required="true"</code> não existe; asterisco no label.</td></tr>
+        <tr><td><code>mx:HBox</code></td><td><code>j:HGroup</code></td><td><code>verticalAlign="middle"</code> → <code>itemsVerticalAlign="itemsCenter"</code>.</td></tr>
+        <tr><td><code>mx:HDividedBox</code></td><td><code>j:HGroup</code></td><td>Sem divisor arrastável; larguras em % (55%/45%), sem altura fixa.</td></tr>
+        <tr><td><code>mx:Label</code></td><td><code>j:Label</code></td><td><code>styleName</code>→<code>className</code>.</td></tr>
+        <tr><td><code>mx:List</code></td><td><code>j:List</code></td><td><code>rowCount</code> não existe; usar altura fixa. Larguras fixas em HGroup.</td></tr>
+        <tr><td><code>mx:Panel</code></td><td><code>j:Card</code></td><td>Title vira <code>j:CardHeader</code> com <code>html:H4</code>; conteúdo em <code>j:CardPrimaryContent</code>.</td></tr>
+        <tr><td><code>mx:Spacer</code></td><td><code>j:Spacer</code></td><td><code>width="100%"</code> mantém comportamento.</td></tr>
+        <tr><td><code>mx:TextInput</code></td><td><code>j:TextInput</code></td><td><code>maxChars</code>/<code>toolTip</code> removidos; evento <code>enter</code> mantido.</td></tr>
+        <tr><td><code>mx:columns</code></td><td><code>j:columns</code></td><td>Container de <code>j:DataGridColumn</code>.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ====================== ETAPA 01 ====================== -->
+  <section class="card">
+    <h2><span class="num">01</span> Preparação do ambiente</h2>
+    <p class="section-desc">
+      Confere ferramentas (Flex SDK, Royale, Java, API Claude) e inventaria o código Flex de origem.
+      Duração: <strong>0,44s</strong> · 7/7 validações aprovadas.
+    </p>
+
+    <table>
+      <thead><tr><th>Validação</th><th>Severidade</th><th>Resultado</th><th>Detalhe</th></tr></thead>
+      <tbody>
+        <tr><td>Projeto Flex encontrado</td><td>Bloqueante</td><td><span class="status ok">✓ OK</span></td><td><code>/workspace/agenda-contatos/frontend/src/Agenda.mxml</code></td></tr>
+        <tr><td>Código Flex inventariado</td><td>Bloqueante</td><td><span class="status ok">✓ OK</span></td><td>2 arquivos</td></tr>
+        <tr><td>Apache Royale instalado no container</td><td>Bloqueante</td><td><span class="status ok">✓ OK</span></td><td><code>/opt/royale/…/royale-asjs</code></td></tr>
+        <tr><td>Java 11+ disponível para o Royale</td><td>Bloqueante</td><td><span class="status ok">✓ OK</span></td><td>OpenJDK 17.0.20.1</td></tr>
+        <tr><td>Apache Flex SDK instalado no container</td><td>Aviso</td><td><span class="status ok">✓ OK</span></td><td><code>/opt/flex</code></td></tr>
+        <tr><td>Chave da Claude Platform configurada</td><td>Bloqueante</td><td><span class="status ok">✓ OK</span></td><td><code>ANTHROPIC_API_KEY</code></td></tr>
+        <tr><td>SDK anthropic instalado</td><td>Bloqueante</td><td><span class="status ok">✓ OK</span></td><td>v1.9.0</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Inventário do código Flex</h3>
+    <div class="grid-2">
+      <div>
+        <table>
+          <thead><tr><th>Arquivo</th><th>Bytes</th><th>Linhas</th></tr></thead>
+          <tbody>
+            <tr><td><code>Agenda.mxml</code></td><td>16 601</td><td>402</td></tr>
+            <tr><td><code>br/ufpi/agenda/ApiClient.as</code></td><td>4 399</td><td>122</td></tr>
+            <tr><td><strong>Total</strong></td><td><strong>21 000</strong></td><td><strong>524</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Componentes Flex por tipo</h3>
+        <div class="chart-wrap"><canvas id="chartComponentes"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== ETAPA 02 ====================== -->
+  <section class="card">
+    <h2><span class="num">02</span> Baseline de compilação Flex</h2>
+    <p class="section-desc">
+      Compila o código Flex original com o Apache Flex SDK para garantir que a origem é válida
+      antes de iniciar qualquer conversão. Duração: <strong>1,61s</strong> · 1/1 validação aprovada.
+    </p>
+    <div class="grid-3">
+      <div class="stat green"><div class="value">0</div><div class="label">Erros</div></div>
+      <div class="stat green"><div class="value">0</div><div class="label">Avisos</div></div>
+      <div class="stat"><div class="value">432 280 B</div><div class="label">Agenda.swf</div></div>
+    </div>
+    <div class="note">
+      <strong>Por que existe esta etapa?</strong> O baseline compila o SWF original e serve de referência
+      comportamental. Se o Flex não compilasse, o pipeline abortaria antes de gastar tokens com o agente.
+    </div>
+  </section>
+
+  <!-- ====================== ETAPA 03 ====================== -->
+  <section class="card">
+    <h2><span class="num">03</span> Análise do código Flex (Agente Analista)</h2>
+    <p class="section-desc">
+      O agente analista lê MXML/AS3 e registra componentes, lógica, serviços, riscos e o plano de conversão.
+      Duração: <strong>42,46s</strong> · 7/7 validações aprovadas.
+    </p>
+
+    <div class="grid-4">
+      <div class="stat"><div class="value">2</div><div class="label">Turnos</div></div>
+      <div class="stat"><div class="value">3</div><div class="label">Chamadas de ferramenta</div></div>
+      <div class="stat purple"><div class="value">16</div><div class="label">Componentes mapeados</div></div>
+      <div class="stat rose"><div class="value">8</div><div class="label">Riscos registrados</div></div>
+    </div>
+
+    <h3>Riscos identificados e mitigações</h3>
+    <table>
+      <thead><tr><th>#</th><th>Risco</th><th>Mitigação</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><code>enabled='{!ocupado}'</code> e expressões booleanas compostas não existem em Jewel.</td><td>Bead <code>j:Disabled</code> ligado a variável <code>[Bindable]</code>, ou validação dentro do handler.</td></tr>
+        <tr><td>2</td><td><code>mx:HDividedBox</code> não tem equivalente com divisor arrastável.</td><td><code>j:HGroup</code> com larguras em % e sem altura fixa.</td></tr>
+        <tr><td>3</td><td><code>Panel.title</code> com binding ternário complexo.</td><td><code>html:H4</code> com variável <code>[Bindable]</code> recalculada.</td></tr>
+        <tr><td>4</td><td><code>grade.scrollToIndex</code> não existe no Royale.</td><td>Remover chamada; manter apenas <code>selectedIndex</code>.</td></tr>
+        <tr><td>5</td><td><code>FlexGlobals.topLevelApplication.parameters</code> não existe.</td><td><code>baseUrl</code> fixo em <code>'api'</code>.</td></tr>
+        <tr><td>6</td><td><code>mx.rpc.http.HTTPService</code>, <code>ResultEvent</code>, <code>FaultEvent</code> não existem.</td><td>Reescrever com <code>org.apache.royale.net.HTTPService</code> e <code>Event/IO_ERROR</code>.</td></tr>
+        <tr><td>7</td><td><code>new Date().time</code> não existe em Royale.</td><td>Trocar por <code>new Date().getTime()</code>.</td></tr>
+        <tr><td>8</td><td><code>List</code> com <code>rowCount</code> e width responsivo não funciona igual.</td><td>Usar largura e altura fixas em pixels.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ====================== ETAPA 04 ====================== -->
+  <section class="card">
+    <h2><span class="num">04</span> Conversão para MXML/AS3 Royale</h2>
+    <p class="section-desc">
+      O mesmo agente, agora com a análise em contexto, reescreve o código para
+      <strong>Apache Royale / Jewel</strong>. Duração: <strong>123,34s</strong> · 14/14 validações aprovadas.
+    </p>
+
+    <div class="grid-4">
+      <div class="stat"><div class="value">3</div><div class="label">Turnos</div></div>
+      <div class="stat"><div class="value">2</div><div class="label">Arquivos escritos</div></div>
+      <div class="stat"><div class="value">444</div><div class="label">Linhas Agenda.mxml</div></div>
+      <div class="stat"><div class="value">124</div><div class="label">Linhas ApiClient.as</div></div>
+    </div>
+
+    <h3>Validações desta etapa</h3>
+    <table>
+      <thead><tr><th>Validação</th><th>Severidade</th><th>Resultado</th><th>Detalhe</th></tr></thead>
+      <tbody>
+        <tr><td>Agente concluiu a conversão</td><td>Bloqueante</td><td><span class="status ok">✓ OK</span></td><td>—</td></tr>
+        <tr><td>Código Royale gerado</td><td>Bloqueante</td><td><span class="status ok">✓ OK</span></td><td>2 arquivos</td></tr>
+        <tr><td>Todos os arquivos planejados foram gerados</td><td>Bloqueante</td><td><span class="status ok">✓ OK</span></td><td><code>Agenda.mxml</code>, <code>ApiClient.as</code></td></tr>
+        <tr><td>MXML bem formado (XML válido)</td><td>Bloqueante</td><td><span class="status ok">✓ OK</span></td><td>—</td></tr>
+        <tr><td>Nenhum namespace Flex (mx/spark)</td><td>Bloqueante</td><td><span class="status ok">✓ OK</span></td><td>—</td></tr>
+        <tr><td>Nenhum import <code>mx.*</code>, <code>spark.*</code> ou <code>flash.*</code></td><td>Bloqueante</td><td><span class="status ok">✓ OK</span></td><td>—</td></tr>
+        <tr><td>Arquivo principal usa <code>j:Application</code></td><td>Bloqueante</td><td><span class="status ok">✓ OK</span></td><td>—</td></tr>
+        <tr><td>Application declara <code>SimpleCSSValuesImpl</code></td><td>Aviso</td><td><span class="status ok">✓ OK</span></td><td>—</td></tr>
+        <tr><td>Bindings têm bead de DataBinding</td><td>Aviso</td><td><span class="status ok">✓ OK</span></td><td>—</td></tr>
+        <tr><td>Nenhum <code>j:Card</code> com altura fixa contendo <code>j:Form</code></td><td>Aviso</td><td><span class="status ok">✓ OK</span></td><td>—</td></tr>
+        <tr><td>Endpoint <code>/contatos</code> presente no código Royale</td><td>Bloqueante</td><td><span class="status ok">✓ OK</span></td><td>—</td></tr>
+        <tr><td>Parâmetro <code>suppress_response_codes</code> preservado</td><td>Bloqueante</td><td><span class="status ok">✓ OK</span></td><td>—</td></tr>
+        <tr><td>Parâmetro <code>_method</code> preservado</td><td>Bloqueante</td><td><span class="status ok">✓ OK</span></td><td>—</td></tr>
+        <tr><td>Funções da origem preservadas no destino</td><td>Aviso</td><td><span class="status ok">✓ OK</span></td><td>30 funções</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Decisões de conversão</h3>
+    <ul class="tight">
+      <li><code>baseUrl</code> da API fixado em <code>'api'</code> (FlexGlobals não existe no Royale).</li>
+      <li><code>mx:Panel</code> → <code>j:Card</code> com <code>j:CardHeader</code>(<code>html:H4</code>) + <code>j:CardPrimaryContent</code>; <code>mx:ControlBar</code> → <code>j:CardActions</code>.</li>
+      <li><code>mx:HDividedBox</code> → <code>j:HGroup</code> com larguras 55%/45% e sem altura fixa.</li>
+      <li>Título dinâmico do Panel virou variável <code>[Bindable] tituloFormulario</code> recalculada em <code>atualizarEstado()</code>.</li>
+      <li><code>enabled='{…}'</code> substituído por bead <code>j:Disabled</code> ligado a <code>ocupado</code>/<code>excluirDesabilitado</code>.</li>
+      <li><code>rowCount='3'</code> das <code>j:List</code> virou altura fixa (90px) e largura fixa (220px).</li>
+      <li><code>maxChars</code>, <code>toolTip</code>, <code>setFocus()</code>, <code>scrollToIndex()</code> removidos.</li>
+      <li><code>required='true'</code> virou asterisco no label: <code>"Nome *"</code>.</li>
+      <li><code>Alert.show</code> com handler virou <code>new Alert()</code> + <code>AlertModel</code> + <code>CloseEvent.CLOSE</code>.</li>
+      <li><code>new Date().time</code> → <code>new Date().getTime()</code> no parâmetro anti-cache <code>_ts</code>.</li>
+    </ul>
+
+    <div class="note warn">
+      <strong>Pendências assumidas (avisos):</strong> os <code>toolTip</code> de busca/telefone/e-mail
+      foram removidos (sem bead equivalente) e não há mais divisor arrastável entre grid e formulário
+      (era <code>mx:HDividedBox</code>).
+    </div>
+  </section>
+
+  <!-- ====================== ETAPA 05 ====================== -->
+  <section class="card">
+    <h2><span class="num">05</span> Compilação Royale assistida</h2>
+    <p class="section-desc">
+      O Royale traduz MXML/AS3 para HTML5/CSS/JS. Se o compilador rejeitar algo, o agente assistente
+      corrige o código automaticamente. Duração: <strong>31,15s</strong> · 4/4 validações aprovadas.
+    </p>
+
+    <div class="grid-4">
+      <div class="stat"><div class="value">3</div><div class="label">Tentativas</div></div>
+      <div class="stat rose"><div class="value">1</div><div class="label">Erro inicial</div></div>
+      <div class="stat green"><div class="value">0</div><div class="label">Erros finais</div></div>
+      <div class="stat green"><div class="value">0</div><div class="label">Avisos finais</div></div>
+    </div>
+
+    <h3>Linha do tempo das tentativas</h3>
+    <div class="timeline-item">
+      <div class="timeline-marker">1</div>
+      <div class="timeline-body">
+        <h4>Tentativa 1 — pipeline <span class="status fail">✗ falhou</span></h4>
+        <div class="meta">Duração: 1,5s · 1 erro · 0 avisos</div>
+        <p style="margin:0;font-size:.9rem">
+          <code>src/Agenda.mxml(374) col 46</code> — <em>This attribute is unexpected. It will be ignored.</em><br>
+          Trecho: <code>&lt;j:Form width="100%" gap="6"&gt;</code>
+        </p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-marker">2</div>
+      <div class="timeline-body">
+        <h4>Tentativa 2 — agente <span class="status ok">✓ compilou</span></h4>
+        <div class="meta">Duração: 9,7s · 0 erros · 0 avisos</div>
+        <p style="margin:0;font-size:.9rem">
+          Correção: removido <code>gap="6"</code> do <code>j:Form</code> — a propriedade não existe no
+          componente Jewel Form; o espaçamento é controlado pelos FormItems e HGroups internos.
+        </p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-marker">3</div>
+      <div class="timeline-body">
+        <h4>Tentativa 3 — verificação final <span class="status ok">✓ compilou</span></h4>
+        <div class="meta">Duração: 9,0s · 0 erros · 0 avisos</div>
+        <p style="margin:0;font-size:.9rem">
+          Recompilação limpa do pipeline para confirmar o estado final.
+        </p>
+      </div>
+    </div>
+
+    <h3>Artefatos gerados</h3>
+    <table>
+      <thead><tr><th>Artefato</th><th>Tipo</th><th>Papel</th></tr></thead>
+      <tbody>
+        <tr><td><code>index.html</code></td><td>HTML</td><td>Página de entrada da aplicação</td></tr>
+        <tr><td><code>Agenda.js</code></td><td>JavaScript</td><td>Lógica traduzida do MXML/AS3 (485 948 bytes)</td></tr>
+        <tr><td><code>Agenda.min.css</code></td><td>CSS</td><td>Estilos do tema Jewel</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ====================== ETAPA 06 ====================== -->
+  <section class="card">
+    <h2><span class="num">06</span> Empacotamento do projeto HTML5</h2>
+    <p class="section-desc">
+      Monta o projeto HTML5 (<code>www/</code>, nginx, Docker) apontando para a mesma API Java 7.
+      Duração: <strong>0,0s</strong> · 9/9 validações aprovadas.
+    </p>
+
+    <div class="grid-2">
+      <div>
+        <h3>Estrutura gerada</h3>
+        <table>
+          <thead><tr><th>Grupo</th><th>Arquivos</th></tr></thead>
+          <tbody>
+            <tr><td><code>www/</code></td><td><code>Agenda.js</code>, <code>Agenda.min.css</code>, <code>index.html</code></td></tr>
+            <tr><td>Infra</td><td><code>Dockerfile</code>, <code>nginx.conf</code>, <code>docker-compose.yml</code>, <code>.dockerignore</code></td></tr>
+            <tr><td>Fonte</td><td><code>src/Agenda.mxml</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h3>Parâmetros de empacotamento</h3>
+        <div class="kv">
+          <div class="k">Projeto Flex</div><div class="v">agenda-contatos</div>
+          <div class="k">Backend</div><div class="v">http://backend:8080</div>
+          <div class="k">Título</div><div class="v">Agenda de Contatos</div>
+          <div class="k">Porta</div><div class="v">8082</div>
+          <div class="k">Imagem</div><div class="v">agenda-contatos-html5</div>
+          <div class="k">Container</div><div class="v">agenda-contatos-html5</div>
+          <div class="k">Rede</div><div class="v">agenda-contatos_default</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>nginx</strong> encaminha <code>/api</code> para o backend Java 7. O <code>index.html</code>
+      não depende de Flash/SWF — a aplicação é 100% HTML5.
+    </div>
+  </section>
+
+  <!-- ====================== ETAPA 07 ====================== -->
+  <section class="card">
+    <h2><span class="num">07</span> Teste de integração com a API Java 7</h2>
+    <p class="section-desc">
+      Serve o HTML5 gerado e executa, via <code>/api</code>, as mesmas chamadas que a tela faz.
+      Duração: <strong>0,73s</strong> · 13/13 validações aprovadas.
+    </p>
+
+    <div class="grid-4">
+      <div class="stat"><div class="value">200</div><div class="label">HTTP em todas as chamadas</div></div>
+      <div class="stat"><div class="value">6</div><div class="label">Chamadas de API</div></div>
+      <div class="stat green"><div class="value">UP</div><div class="label">Status backend</div></div>
+      <div class="stat green"><div class="value">3</div><div class="label">Contatos na listagem</div></div>
+    </div>
+
+    <h3>Evidências de integração</h3>
+    <table>
+      <thead><tr><th>Descrição</th><th>Método</th><th>URL</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Health</td><td>GET</td><td><code>/api/health</code></td><td><span class="status ok">200</span></td></tr>
+        <tr><td>Listar</td><td>GET</td><td><code>/api/contatos?suppress_response_codes=true&amp;_ts=1</code></td><td><span class="status ok">200</span></td></tr>
+        <tr><td>Criar</td><td>POST</td><td><code>/api/contatos?…</code></td><td><span class="status ok">200</span></td></tr>
+        <tr><td>Atualizar</td><td>POST + <code>_method=PUT</code></td><td><code>/api/contatos/4?…</code></td><td><span class="status ok">200</span></td></tr>
+        <tr><td>Validação (erro JSON)</td><td>POST</td><td><code>/api/contatos?…</code></td><td><span class="status ok">200</span></td></tr>
+        <tr><td>Excluir</td><td>POST + <code>_method=DELETE</code></td><td><code>/api/contatos/4?…</code></td><td><span class="status ok">200</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Ambiente do backend</h3>
+    <div class="grid-4">
+      <div class="stat"><div class="value">1.7.0_221</div><div class="label">Java</div></div>
+      <div class="stat"><div class="value">7.0.94</div><div class="label">Tomcat</div></div>
+      <div class="stat"><div class="value">5.7.44</div><div class="label">MySQL</div></div>
+      <div class="stat green"><div class="value">UP</div><div class="label">Status</div></div>
+    </div>
+
+    <details>
+      <summary>Ver payload de exemplo — Listar contatos</summary>
+      <table>
+        <thead><tr><th>id</th><th>Nome</th><th>Telefones</th><th>E-mails</th><th>Cidade/País</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>1</td><td>Ana Beatriz Sousa</td>
+            <td>(86) 3215-5500 · (86) 99999-1234</td>
+            <td>ana.sousa@exemplo.com.br · ana@ufpi.edu.br</td>
+            <td>Teresina/PI, Brasil</td>
+          </tr>
+          <tr>
+            <td>2</td><td>Carlos Eduardo Lima</td>
+            <td>(85) 98888-4321</td>
+            <td>carlos.lima@exemplo.com.br</td>
+            <td>Fortaleza/CE, Brasil</td>
+          </tr>
+          <tr>
+            <td>3</td><td>María Fernández</td>
+            <td>+507 6000-1111</td>
+            <td>maria.fernandez@ejemplo.com.pa</td>
+            <td>Ciudad de Panamá, Panamá</td>
+          </tr>
+        </tbody>
+      </table>
+    </details>
+
+    <details>
+      <summary>Ver resposta de validação (erro)</summary>
+      <pre style="margin:0;font-size:.85rem;background:#0f172a;color:#e2e8f0;padding:14px;border-radius:8px;overflow:auto"><code>{
+  "erro": "O nome é obrigatório",
+  "status": 400,
+  "detalhes": ["O nome é obrigatório"]
+}</code></pre>
+    </details>
+  </section>
+
+  <!-- ====================== DURAÇÃO ====================== -->
+  <section class="card">
+    <h2><span class="num">⏱</span> Tempo por etapa</h2>
+    <p class="section-desc">
+      Tempo total do pipeline: <strong>200s</strong>. As etapas com agentes (03 e 04) dominam o tempo.
+    </p>
+    <table>
+      <thead><tr><th>Etapa</th><th>Duração</th><th>% do total</th><th>Validações</th></tr></thead>
+      <tbody>
+        <tr><td>01 · Preparação</td><td>0,44s</td><td>0,2%</td><td>7/7</td></tr>
+        <tr><td>02 · Baseline Flex</td><td>1,61s</td><td>0,8%</td><td>1/1</td></tr>
+        <tr><td>03 · Análise</td><td>42,46s</td><td>21,2%</td><td>7/7</td></tr>
+        <tr><td>04 · Conversão</td><td>123,34s</td><td>61,7%</td><td>14/14</td></tr>
+        <tr><td>05 · Compilação</td><td>31,15s</td><td>15,6%</td><td>4/4</td></tr>
+        <tr><td>06 · Empacotamento</td><td>0,0s</td><td>0,0%</td><td>9/9</td></tr>
+        <tr><td>07 · Integração</td><td>0,73s</td><td>0,4%</td><td>13/13</td></tr>
+      </tbody>
+    </table>
+    <div class="chart-wrap tall"><canvas id="chartDuracao"></canvas></div>
+  </section>
+
+  <!-- ====================== TOKENS ====================== -->
+  <section class="card">
+    <h2><span class="num">🪙</span> Uso de tokens (Claude Platform)</h2>
+    <p class="section-desc">
+      Consumo por agente. O cache é fortemente usado nas etapas 03/04 (contexto grande reaproveitado).
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Agente</th>
+          <th>Entrada</th>
+          <th>Saída</th>
+          <th>Cache (escrita)</th>
+          <th>Cache (leitura)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>analista-flex</strong></td>
+          <td>10</td>
+          <td>21 708</td>
+          <td>38 306</td>
+          <td>81 830</td>
+        </tr>
+        <tr>
+          <td><strong>assistente-compilador</strong></td>
+          <td>8</td>
+          <td>721</td>
+          <td>14 871</td>
+          <td>37 526</td>
+        </tr>
+        <tr style="background:#f8fafc;font-weight:600">
+          <td>Total</td>
+          <td>18</td>
+          <td>22 429</td>
+          <td>53 177</td>
+          <td>119 356</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="chart-wrap tall"><canvas id="chartTokens"></canvas></div>
+
+    <div class="note">
+      <strong>Cache de prompt:</strong> o pipeline reaproveita o contexto entre os turnos
+      (leitura de cache na casa dos 81k–119k tokens), reduzindo drasticamente o custo por chamada.
+    </div>
+  </section>
+
+  <!-- ====================== VALIDAÇÕES ====================== -->
+  <section class="card">
+    <h2><span class="num">✓</span> Resumo de validações</h2>
+    <p class="section-desc">
+      55 validações no total, distribuídas entre bloqueantes (falha o pipeline se não passar) e avisos.
+    </p>
+    <div class="grid-2">
+      <div><div class="chart-wrap"><canvas id="chartValidacoes"></canvas></div></div>
+      <div><div class="chart-wrap"><canvas id="chartSeveridade"></canvas></div></div>
+    </div>
+  </section>
+
+  <!-- ====================== CONCLUSÃO ====================== -->
+  <section class="card">
+    <h2><span class="num">§</span> Conclusão</h2>
+    <p>
+      A migração foi executada de ponta a ponta em <strong>200 segundos</strong> com
+      <strong>zero avisos finais</strong>. O pipeline automatizado:
+    </p>
+    <ul class="tight">
+      <li>Compilou o Flex original como baseline de referência.</li>
+      <li>Analisou 524 linhas de MXML/AS3 e mapeou 16 componentes MX → Jewel.</li>
+      <li>Reescreveu os dois arquivos para <code>royale/src/</code>, preservando 30 funções e o contrato REST.</li>
+      <li>Recuperou automaticamente 1 erro de compilação (<code>gap</code> em <code>j:Form</code>) via agente assistente.</li>
+      <li>Empacotou o projeto HTML5 com nginx + Docker, apontando para o backend Java 7 existente.</li>
+      <li>Validou 6 chamadas REST contra o backend, incluindo o <code>_method</code> override e o formato de erro.</li>
+    </ul>
+
+    <div class="note success">
+      <strong>Resultado final:</strong> aplicação HTML5 (<code>index.html</code> + <code>Agenda.js</code> + <code>Agenda.min.css</code>)
+      funcionalmente equivalente ao Flex original, sem dependência de Flash e reutilizando o backend Java 7
+      sem qualquer alteração no contrato da API.
+    </div>
+
+    <h3>Pendências conhecidas (não bloqueantes)</h3>
+    <ul class="tight">
+      <li><code>toolTip</code> dos campos de busca/telefone/e-mail removidos (sem bead equivalente em Jewel).</li>
+      <li>Divisor arrastável entre grid e formulário removido (<code>mx:HDividedBox</code> não tem equivalente).</li>
+    </ul>
+  </section>
+
+</div>
+
+<footer class="report-footer">
+  Relatório gerado a partir da execução <code>20261003-110418</code> ·
+  <code>relatorio-migracao.md</code>, <code>resumo.json</code>, <code>pipeline.log</code> e demais artefatos.
+</footer>
+
+<script>
+  // ============ Componentes Flex por tipo ============
+  new Chart(document.getElementById('chartComponentes'), {
+    type: 'bar',
+    data: {
+      labels: ['HBox','Button','TextInput','FormItem','Label','DataGridColumn','Panel','FormHeading','List','DataGrid','Form','ControlBar','Application','HDividedBox','Spacer','columns'],
+      datasets: [{
+        label: 'Ocorrências',
+        data: [6,10,9,9,5,5,2,3,2,1,1,1,1,1,1,1],
+        backgroundColor: '#2563eb',
+        borderRadius: 4
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { beginAtZero: true, ticks: { precision: 0 } },
+        y: { ticks: { font: { size: 10 } } }
+      }
+    }
+  });
+
+  // ============ Duração por etapa ============
+  new Chart(document.getElementById('chartDuracao'), {
+    type: 'bar',
+    data: {
+      labels: ['01 Preparação','02 Baseline','03 Análise','04 Conversão','05 Compilação','06 Empacotamento','07 Integração'],
+      datasets: [{
+        label: 'Duração (s)',
+        data: [0.44, 1.61, 42.46, 123.34, 31.15, 0.0, 0.73],
+        backgroundColor: ['#94a3b8','#94a3b8','#7c3aed','#2563eb','#0ea5e9','#94a3b8','#94a3b8'],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => `${ctx.parsed.y}s`
+          }
+        }
+      },
+      scales: {
+        y: { beginAtZero: true, title: { display: true, text: 'segundos' } }
+      }
+    }
+  });
+
+  // ============ Tokens ============
+  new Chart(document.getElementById('chartTokens'), {
+    type: 'bar',
+    data: {
+      labels: ['analista-flex', 'assistente-compilador'],
+      datasets: [
+        { label: 'Entrada', data: [10, 8], backgroundColor: '#94a3b8', borderRadius: 4 },
+        { label: 'Saída', data: [21708, 721], backgroundColor: '#dc2626', borderRadius: 4 },
+        { label: 'Cache escrita', data: [38306, 14871], backgroundColor: '#f59e0b', borderRadius: 4 },
+        { label: 'Cache leitura', data: [81830, 37526], backgroundColor: '#16a34a', borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom' } },
+      scales: { y: { beginAtZero: true, type: 'logarithmic' } }
+    }
+  });
+
+  // ============ Validações por etapa ============
+  new Chart(document.getElementById('chartValidacoes'), {
+    type: 'bar',
+    data: {
+      labels: ['01','02','03','04','05','06','07'],
+      datasets: [{
+        label: 'Validações aprovadas',
+        data: [7,1,7,14,4,9,13],
+        backgroundColor: '#16a34a',
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+    }
+  });
+
+  // ============ Severidade ============
+  new Chart(document.getElementById('chartSeveridade'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Bloqueante', 'Aviso'],
+      datasets: [{
+        data: [38, 17],
+        backgroundColor: ['#2563eb', '#f59e0b'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom' }
+      }
+    }
+  });
+</script>
+</body>
+</html>
