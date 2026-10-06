@@ -460,7 +460,7 @@ class CompilacaoRoyale(Etapa):
 
 
 # ============================================================================ 06 empacotamento
-
+# TODO: remover a definição fixa de "__REDE__": "myflextohtml_default" para "__REDE__": f"{projeto_flex_default}" sem quebrar o container da aplicação migrada
 class Empacotamento(Etapa):
     numero, nome = 6, "empacotamento"
     titulo = "Empacotamento do projeto HTML5"
@@ -485,7 +485,7 @@ class Empacotamento(Etapa):
             "__PORTA__": str(ctx.dados.get("porta_html5", 8082)),
             "__IMAGEM__": nome_destino,
             "__CONTAINER__": nome_destino,
-            "__REDE__": f"{projeto_flex}_default",
+            "__REDE__": "myflextohtml_default",
         }
         gerados = []
         for modelo in ("Dockerfile", "nginx.conf", "docker-compose.yml"):
